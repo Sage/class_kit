@@ -1,0 +1,3 @@
+require_relative 'exceptions/invalid_attribute_value_error'
+require_relative 'exceptions/attribute_not_found_error'
+require_relative 'exceptions/invalid_class_error'
