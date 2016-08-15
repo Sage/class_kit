@@ -47,7 +47,7 @@ Or install it yourself as:
         attr_accessor_type :contacts, type: Array, collection_type: Contact, auto_init: true
     end
     
-ClassKit entities can be created by implementing the `extend ClassKit` extend into the entity class and then using the `attr_accessor_type` method to register methods as above inplace of the standard ruby `attr_accessor` method.
+ClassKit entities can be created by implementing the `extend ClassKit` extend into the entity class and then using the `attr_accessor_type` method to register attributes as above inplace of the standard ruby `attr_accessor` method.
 
 ###attr_accessor_type
 
