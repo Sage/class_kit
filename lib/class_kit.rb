@@ -7,4 +7,5 @@ require_relative 'class_kit/helper'
 require 'hash_kit'
 require 'json'
 require 'date'
+require 'bigdecimal'
 

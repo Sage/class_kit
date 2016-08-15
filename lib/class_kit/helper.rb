@@ -3,6 +3,7 @@ module ClassKit
 
     def initialize
       @hash_helper = HashKit::Helper.new
+      @json_helper = JsonKit::Helper.new
       @attribute_helper = ClassKit::AttributeHelper.new
       @value_helper = ClassKit::ValueHelper.new
     end
@@ -28,17 +29,19 @@ module ClassKit
 
     def to_hash(object)
       validate_class_kit(object.class)
-      @hash_helper.to_hash(object)
+      return @hash_helper.to_hash(object)
     end
 
     def from_hash(hash:, klass:)
       validate_class_kit(klass)
+      hash = @hash_helper.symbolize(hash)
       entity = klass.new
       attributes = @attribute_helper.get_attributes(klass)
       attributes.each do |a|
         key = a[:name]
         type = a[:type]
 
+        #if the hash value is nil skip it
         if hash[key] == nil
           next
         end
@@ -63,6 +66,15 @@ module ClassKit
         eval("entity.#{key}=value")
       end
       return entity
+    end
+
+    def to_json(object)
+      @json_helper.to_json(object)
+    end
+
+    def from_json(json:, klass:)
+      hash = JSON.load(json)
+      return from_hash(hash: hash, klass: klass)
     end
 
   end

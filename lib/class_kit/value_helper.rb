@@ -1,5 +1,13 @@
 module ClassKit
   class ValueHelper
+
+    def self.instance
+      if !class_variable_defined?(:@@instance)
+        class_variable_set(:@@instance, ClassKit::ValueHelper.new)
+      end
+      return @@instance
+    end
+
     def parse(type: type, value: value)
       begin
       if type == Time
@@ -40,14 +48,21 @@ module ClassKit
         value = Integer(value)
       elsif type == Float
         value = Float(value)
+      elsif type == BigDecimal
+        Float(value)
+        value = BigDecimal.new(value.to_s)
       elsif type == String
         value = String(value)
+      elsif type == Regexp
+        value = Regexp.new(value)
       elsif type == Hash
-        raise 'Unable to parse Hash'
+        if !value.is_a?(Hash)
+          raise 'Unable to parse Hash'
+        end
       elsif type == Array
-        raise 'Unable to parse Array'
-      elsif type == Hash
-        raise 'Unable to parse Hash'
+        if !value.is_a?(Array)
+          raise 'Unable to parse Array'
+        end
       else
         raise 'Unable to parse'
       end

@@ -86,5 +86,132 @@ RSpec.describe ClassKit::Helper do
         expect(entity.address_collection[1].postcode).to eq(hash[:address_collection][1][:postcode])
       end
     end
+    context 'when a valid hash is specified with nil attributes' do
+      it 'should convert the hash' do
+        entity = subject.from_hash(hash: {}, klass: TestEntity)
+        expect(entity).not_to be nil
+        expect(entity.string).to be nil
+        expect(entity.int).to eq(10)
+        expect(entity.address).to be nil
+        expect(entity.address_collection).to be_a(Array)
+        expect(entity.address_collection.length).to eq(0)
+      end
+    end
+  end
+
+  describe '#to_json' do
+    let(:address) do
+      TestAddress.new.tap do |a|
+        a.line1 = 'street 1'
+        a.line2 = 'street 2'
+        a.postcode = 'ne3 5rt'
+      end
+    end
+    let(:date) { Date.parse('01-Mar-2016') }
+    let(:date_time) { DateTime.parse('01-Mar-2016 11:00') }
+    let(:time) { Time.parse('01-Mar-2016 11:00') }
+    let(:entity) do
+      TestEntity.new.tap do |e|
+        e.string = 'ABC'
+        e.int = 5
+        e.date = date
+        e.datetime = date_time
+        e.time = time
+        e.bool = true
+        e.address = address
+        e.address_collection << address
+        e.address_collection << address
+      end
+    end
+    let(:hash) do
+      {
+          int: 5,
+          date: date,
+          datetime: date_time,
+          time: time,
+          string: 'ABC',
+          bool: true,
+          address: {
+              line1: 'street 1',
+              line2: 'street 2',
+              postcode: 'ne3 5rt'
+          },
+          address_collection: [
+                      {
+                          line1: 'street 1',
+                          line2: 'street 2',
+                          postcode: 'ne3 5rt'
+                      },
+                      {
+                          line1: 'street 1',
+                          line2: 'street 2',
+                          postcode: 'ne3 5rt'
+                      }
+                  ]
+      }
+    end
+    it 'should convert the class to json' do
+      result = subject.to_json(entity)
+      expect(result).to be_a(String)
+      expect(result).to eq(JSON.dump(hash))
+    end
+  end
+
+  describe '#from_json' do
+    let(:date) { Date.parse('01-Mar-2016') }
+    let(:date_time) { DateTime.parse('01-Mar-2016 11:00') }
+    let(:time) { Time.parse('01-Mar-2016 11:00') }
+    let(:hash) do
+      {
+          int: 5,
+          date: date,
+          datetime: date_time,
+          time: time,
+          string: 'ABC',
+          bool: true,
+          address: {
+              line1: 'street 1',
+              line2: 'street 2',
+              postcode: 'ne3 5rt'
+          },
+          address_collection: [
+                   {
+                       line1: 'a street 1',
+                       line2: 'a street 2',
+                       postcode: 'a ne3 5rt'
+                   },
+                   {
+                       line1: 'b street 1',
+                       line2: 'b street 2',
+                       postcode: 'b ne3 5rt'
+                   }
+               ]
+      }
+    end
+    let(:json) { JSON.dump(hash) }
+
+    it 'should convert json into the relevant entity' do
+      entity = subject.from_json(json: json, klass: TestEntity)
+      expect(entity).to be_a(TestEntity)
+      expect(entity.int).to eq(hash[:int])
+      expect(entity.string).to eq(hash[:string])
+      expect(entity.date).to eq(hash[:date])
+      expect(entity.datetime).to eq(hash[:datetime])
+      expect(entity.time).to eq(hash[:time])
+      expect(entity.string).to eq(hash[:string])
+      expect(entity.bool).to eq(hash[:bool])
+      expect(entity.address).to be_a(TestAddress)
+      expect(entity.address.line1).to eq(hash[:address][:line1])
+      expect(entity.address.line2).to eq(hash[:address][:line2])
+      expect(entity.address.postcode).to eq(hash[:address][:postcode])
+      expect(entity.address_collection).to be_a(Array)
+      expect(entity.address_collection.length).to eq(2)
+      expect(entity.address_collection[0].line1).to eq(hash[:address_collection][0][:line1])
+      expect(entity.address_collection[0].line2).to eq(hash[:address_collection][0][:line2])
+      expect(entity.address_collection[0].postcode).to eq(hash[:address_collection][0][:postcode])
+      expect(entity.address_collection[1].line1).to eq(hash[:address_collection][1][:line1])
+      expect(entity.address_collection[1].line2).to eq(hash[:address_collection][1][:line2])
+      expect(entity.address_collection[1].postcode).to eq(hash[:address_collection][1][:postcode])
+    end
   end
 end
