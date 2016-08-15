@@ -153,6 +153,17 @@ This method is called to convert a JSON string into a ClassKit entity.
 
 ClassKit entity.
 
+NOTE: This method will parse any nested Hashes that match attributes specified with a type: that is a ClassKit entity, as well as populating `Arrays` where the `collection_type:` has been specified as a ClassKit entity.
+
+Example:
+
+    {"name":"Joe Bloggs","dob":"03-JUNE-1980","address":{"line1":"25 The Street","line2":"Home Town","postcode":"NE3 5RT"},"contacts":[{"landline":"01235456789","mobile":"0789456123","email":"joe.bloggs@test.com"}]}
+    
+Would be parsed into the ClassKit `Employee` class defined above along with the nested `Address` attribute and `Contact` array.
+
+Allowing the `Address` to be accessed via `entity.address.line1` etc and the `Contact` details to be accessed via `entity.contacts[0].landline` etc.
+
+
 ###ClassKit::AttributeHelper
 
 This helper class provides several useful methods for accessing the attribute details for a ClassKit entity.
