@@ -30,3 +30,12 @@ end
 class InvalidClass
   attr_accessor :text
 end
+class TestParent
+  extend ClassKit
+  attr_accessor_type :base1, type: String
+  attr_accessor_type :base2
+end
+class TestChild < TestParent
+  attr_accessor_type :child1, type: String
+  attr_accessor_type :child2
+end
