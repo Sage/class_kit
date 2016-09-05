@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "pry"
 
-  spec.add_dependency('json', '1.8.3')
+  spec.add_dependency('json')
   spec.add_dependency('hash_kit')
   spec.add_dependency('json_kit')
 end
