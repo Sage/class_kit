@@ -32,7 +32,7 @@ module ClassKit
       return @hash_helper.to_hash(object)
     end
 
-    def from_hash(hash:, klass:)
+    def from_hash(hash: hash, klass: klass)
       validate_class_kit(klass)
       hash = @hash_helper.symbolize(hash)
       entity = klass.new
@@ -72,7 +72,7 @@ module ClassKit
       @json_helper.to_json(object)
     end
 
-    def from_json(json:, klass:)
+    def from_json(json: json, klass: klass)
       hash = JSON.load(json)
       return from_hash(hash: hash, klass: klass)
     end

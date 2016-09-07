@@ -4,7 +4,7 @@ module ClassKit
       return klass.class_variable_get(:@@class_kit_attributes).freeze
     end
 
-    def get_attribute(klass:, name:)
+    def get_attribute(klass: klass, name: name)
       attribute = get_attributes(klass).detect { |i| i[:name] == name }
       if attribute == nil
         raise ClassKit::Exceptions::AttributeNotFoundError.new("Attribute: #{name}, could not be found.")
@@ -12,8 +12,9 @@ module ClassKit
       return attribute
     end
 
-    def get_attribute_type(klass:,name:)
+    def get_attribute_type(klass: klass,name: name)
       return get_attribute(klass: klass,name: name)[:type]
     end
+
   end
 end
