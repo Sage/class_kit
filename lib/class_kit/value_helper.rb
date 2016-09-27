@@ -2,76 +2,72 @@ module ClassKit
   class ValueHelper
 
     def self.instance
-      if !class_variable_defined?(:@@instance)
-        class_variable_set(:@@instance, ClassKit::ValueHelper.new)
-      end
-      return @@instance
+      @@instance ||= new
     end
 
-    def parse(type: type, value: value)
-      begin
+    def parse(type:, value:)
       if type == Time
         if value.is_a?(Time)
-          value = value
+          value
         elsif value.is_a?(Integer) || value.is_a?(Float)
-          value = Time.at(value)
+          Time.at(value)
         else
-          value = Time.parse(value)
+          Time.parse(value)
         end
       elsif type == Date
         if value.is_a?(Date)
-          value = value
+          value
         elsif value.is_a?(Integer)
-          value = Date.at(value)
+          Date.at(value)
         else
-          value = Date.parse(value)
+          Date.parse(value)
         end
       elsif type == DateTime
         if value.is_a?(DateTime)
-          value = value
+          value
         elsif value.is_a?(Integer)
-          value = DateTime.at(value)
+          DateTime.at(value)
         else
-          value = DateTime.parse(value)
+          DateTime.parse(value)
         end
       elsif type == :bool
         if value == true || value == false
-          value = value
+          value
         elsif(/(true|t|yes|y|1)$/i === value.to_s.downcase)
-          value = true
+          true
         elsif (/(false|f|no|n|0)$/i === value.to_s.downcase)
-          value = false
+          false
         elsif value != nil
           raise 'Unable to parse bool'
         end
       elsif type == Integer
-        value = Integer(value)
+        Integer(value)
       elsif type == Float
-        value = Float(value)
-      elsif type == BigDecimal
         Float(value)
-        value = BigDecimal.new(value.to_s)
+      elsif type == BigDecimal
+        if value.is_a?(BigDecimal)
+          value
+        else
+          value = value.to_s
+          raise 'Unable to parse BigDecimal' unless value =~ /\A\d+(\.\d*)?/
+          BigDecimal(value)
+        end
       elsif type == String
-        value = String(value)
+        String(value)
       elsif type == Regexp
-        value = Regexp.new(value)
+        Regexp.new(value)
       elsif type == Hash
-        if !value.is_a?(Hash)
-          raise 'Unable to parse Hash'
-        end
+        raise 'Unable to parse Hash' unless value.is_a?(Hash)
+        value
       elsif type == Array
-        if !value.is_a?(Array)
-          raise 'Unable to parse Array'
-        end
+        raise 'Unable to parse Array' unless value.is_a?(Array)
+        value
       else
         raise 'Unable to parse'
       end
-      rescue => e
-        raise ClassKit::Exceptions::InvalidParseValueError.new("Unable to parse value: #{value} into type: #{type}. Error: #{e}")
-      end
-
-      return value
+    rescue => e
+      raise ClassKit::Exceptions::InvalidParseValueError,
+            "Unable to parse value: #{value} into type: #{type}. Error: #{e}"
     end
-
   end
 end
