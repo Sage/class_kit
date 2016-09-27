@@ -3,17 +3,17 @@ module ClassKit
                          meta: {})
 
     unless class_variable_defined?(:@@class_kit_attributes)
-      class_variable_set(:@@class_kit_attributes, [])
+      class_variable_set(:@@class_kit_attributes, {})
     end
 
     attributes = class_variable_get(:@@class_kit_attributes)
 
-    attributes.push({ name: name, type: type, collection_type: collection_type, allow_nil: allow_nil,
-                                  default: default, auto_init: auto_init, meta: meta })
+    attributes[name] = { name: name, type: type, collection_type: collection_type, allow_nil: allow_nil,
+                                  default: default, auto_init: auto_init, meta: meta }
 
     class_eval do
       define_method name do
-        cka = self.class.class_variable_get(:@@class_kit_attributes).detect { |i| i[:name] == name }
+        cka = self.class.class_variable_get(:@@class_kit_attributes)[name]
 
         current_value = instance_variable_get(:"@#{name}")
 
@@ -32,7 +32,7 @@ module ClassKit
     class_eval do
       define_method "#{name}=" do |value|
         #get the attribute meta data
-        cka = self.class.class_variable_get(:@@class_kit_attributes).detect { |i| i[:name] == name }
+        cka = self.class.class_variable_get(:@@class_kit_attributes)[name]
 
         #verify if the attribute is allowed to be set to nil
         if value.nil? && cka[:allow_nil] == false

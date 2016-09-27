@@ -6,7 +6,7 @@ module ClassKit
     #
     # @return [Hash]
     def get_attributes(klass)
-      klass.class_variable_get(:@@class_kit_attributes).freeze
+      klass.class_variable_get(:@@class_kit_attributes).values.freeze
     end
 
     # Get attribute for a given class and name
@@ -18,7 +18,7 @@ module ClassKit
     #
     # @return [Hash] that describes the attribute
     def get_attribute(klass:, name:)
-      get_attributes(klass).detect { |i| i[:name] == name } ||
+      klass.class_variable_get(:@@class_kit_attributes)[name] ||
         raise(ClassKit::Exceptions::AttributeNotFoundError, "Attribute: #{name}, could not be found.")
     end
 
