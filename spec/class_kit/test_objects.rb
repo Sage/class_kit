@@ -39,3 +39,10 @@ class TestChild < TestParent
   attr_accessor_type :child1, type: String
   attr_accessor_type :child2
 end
+class TestChild2 < TestParent
+  attr_accessor_type :text, type: String
+end
+class TestChild3 < TestParent
+  attr_accessor_type :text1, type: String
+  attr_accessor_type :text2, type: String
+end

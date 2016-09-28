@@ -11,10 +11,6 @@ RSpec.describe ClassKit::AttributeHelper do
       it 'should return all ClassKit attributes' do
         results = subject.get_attributes(TestChild)
         expect(results.length).to eq(4)
-        expect(results[0][:name]).to eq(:base1)
-        expect(results[1][:name]).to eq(:base2)
-        expect(results[2][:name]).to eq(:child1)
-        expect(results[3][:name]).to eq(:child2)
       end
     end
   end
