@@ -1,5 +1,10 @@
 module ClassKit
   class AttributeHelper
+
+    def self.instance
+      @instance ||= ClassKit::AttributeHelper.new
+    end
+
     # Get attributes for a given class
     #
     # @param klass [ClassKit] a class that has been extended with ClassKit

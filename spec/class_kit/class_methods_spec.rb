@@ -5,6 +5,16 @@ RSpec.describe ClassKit do
     TestEntity.new
   end
 
+  let(:child_entity) do
+    TestParent.new
+  end
+
+  context 'when setting the value of a base class attribute' do
+    it 'should not error' do
+      child_entity.base1 = 'hello world'
+    end
+  end
+
   describe '#attr_accessor_type' do
     it 'should create the attribute' do
       expect(test_entity.respond_to?(:int)).to be true
