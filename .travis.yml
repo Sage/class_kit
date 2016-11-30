@@ -9,7 +9,7 @@ deploy:
   provider: rubygems
   api_key:
     secure: "MYeZCI8j2iLvGb26A+aLoIZKg/cnVf/eVwJ1BKIt8e9vBz+FccjSOxASuJ+oJrlEcFNme8x/SEt6HA8//ID3m1DaOj6GK+Zj3fZYI2vVwJ3vIUDfqugdW4hkXTPixbdUf2hpISxfHRxeA3+1JFIjGPdJI8bcJOf7bbB5F/VsbRbIkaTQsj8EhpUsn3PpsV2qvP8CrRPTzU0Q3X4PVRTnaeV/bF8WCenmGsBNgEALjgR/gut2vogAP3j1zLIzxMw86gSxcexraPhYaT6pVnopjLFtJG6xHbv+R27ZKGlh3yx01ird7Frd1BGYD+Lh7Wsj1TxmTW3c2SGRHHJzZE6sgdVJqbAgccLOLsnQ4jVUYbdGxsptErwlAnD76SUM5L89sn6mq+RkljDenZ/aMvc8yu49atuTwsb73Ab1vwvfxFZw64Wv7zTDz6Ljn3TnGNIk1zqF7PrtSouAGrt0RpgMQwZmekppjMcKrr52xKoMtz0ImBD5ggqah52iajS6MlsG4fmPIlN6458SF36XabJzSv1Kih/8e9PpXANudrI91juMaIkEEQmCQSheVjXx9UleINgIF0/XVchK11BF0+iqAjZFHsaiSY7iaTr3oiv8FwQ1MQZeQdQ4b04qqzmJZz27dSm+Egp5cS+jN2iuC94SfDy54JmZaN/MRjWlCvPTX4g="
-  gem: sinject
+  gem: class_kit
   on:
     tags: true
 
