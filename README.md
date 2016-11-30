@@ -107,6 +107,10 @@ This method is called to determine if an object is a ClassKit entity or not.
 
 `true` or `false`
 
+Example:
+
+    helper.is_class_kit?(obj)
+
 #### #to_hash(object)
 
 This method is called to convert a ClassKit entity into a `Hash`.
@@ -117,6 +121,10 @@ This method is called to convert a ClassKit entity into a `Hash`.
 [Return]
 
 `Hash`
+
+Example:
+
+    hash = helper.to_hash(obj)
         
 #### #from_hash(hash:,klass:)
 
@@ -124,11 +132,16 @@ This method is called to convert a `Hash` into a ClassKit entity.
 
 [Params]
 - `hash:` This is the `Hash` to convert.
-- `klass:` This is the class of the ClassKit entity you want to convert the `Hash` into.
+- `klass:` This is the class of the ClassKit entity you want to convert the `Hash` into. 
+(NOTE: It should be the fully qualified class name including modules)
 
 [Return]
 
 ClassKit entity.
+
+Example:
+
+    entity = helper.from_hash(hash: hsh, klass: Contact)
 
 #### #to_json(object)
 
@@ -141,6 +154,10 @@ This method is called to convert a ClassKit entity into JSON.
 
 JSON string.
 
+Example:
+
+    json_string = helper.to_json(obj)
+
 #### #from_json(json:, klass:)
 
 This method is called to convert a JSON string into a ClassKit entity.
@@ -148,10 +165,15 @@ This method is called to convert a JSON string into a ClassKit entity.
 [Params]
 - `json:` This is the JSON string to convert.
 - `klass:` This is the class of the ClassKit entity you want to convert the JSON into.
+(NOTE: It should be the fully qualified class name including modules)
 
 [Return]
 
 ClassKit entity.
+
+Example:
+
+    entity = helper.from_json(json: json_string, klass: Contact)
 
 NOTE: This method will parse any nested Hashes that match attributes specified with a type: that is a ClassKit entity, as well as populating `Arrays` where the `collection_type:` has been specified as a ClassKit entity.
 
