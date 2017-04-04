@@ -1,4 +1,3 @@
-require_relative 'class_kit/version'
 require_relative 'class_kit/class_methods'
 require_relative 'class_kit/exceptions'
 require_relative 'class_kit/attribute_helper'

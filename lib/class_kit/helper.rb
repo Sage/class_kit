@@ -3,7 +3,6 @@ module ClassKit
 
     def initialize
       @hash_helper = HashKit::Helper.new
-      @json_helper = JsonKit::Helper.new
       @attribute_helper = ClassKit::AttributeHelper.new
       @value_helper = ClassKit::ValueHelper.new
     end
@@ -17,16 +16,18 @@ module ClassKit
                                     "Class: #{klass} does not implement ClassKit.")
     end
 
+    #This method is called to convert a ClassKit object into a Hash.
     def to_hash(object)
       validate_class_kit(object.class)
 
       @hash_helper.to_hash(object)
     end
 
+    #This method is called to convert a Hash into a ClassKit object.
     def from_hash(hash:, klass:)
       validate_class_kit(klass)
 
-      hash = @hash_helper.symbolize(hash)
+      @hash_helper.indifferent!(hash)
       entity = klass.new
       attributes = @attribute_helper.get_attributes(klass)
       attributes.each do |attribute|
@@ -60,12 +61,16 @@ module ClassKit
       entity
     end
 
+    #This method is called to convert a ClassKit object into JSON.
     def to_json(object)
-      @json_helper.to_json(object)
+      hash = @hash_helper.to_hash(object)
+      JSON.dump(hash)
     end
 
+    #This method is called to convert JSON into a ClassKit object.
     def from_json(json:, klass:)
-      from_hash(hash: JSON.load(json), klass: klass)
+      hash = JSON.load(json)
+      from_hash(hash: hash, klass: klass)
     end
   end
 end
