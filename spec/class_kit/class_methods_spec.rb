@@ -9,9 +9,19 @@ RSpec.describe ClassKit do
     TestParent.new
   end
 
+  let(:empty_child_entity) do
+    TestEmptyChild.new
+  end
+
   context 'when setting the value of a base class attribute' do
     it 'should not error' do
       child_entity.base1 = 'hello world'
+    end
+  end
+
+  context 'when a child entity is empty' do
+    it 'class_kit_attributes are avaiable' do
+      expect{ empty_child_entity.base1 }.not_to raise_error
     end
   end
 
