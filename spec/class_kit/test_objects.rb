@@ -36,13 +36,20 @@ class TestParent
   attr_accessor_type :base2
 end
 class TestChild < TestParent
+  extend ClassKit
   attr_accessor_type :child1, type: String
   attr_accessor_type :child2
 end
 class TestChild2 < TestParent
+  extend ClassKit
   attr_accessor_type :text, type: String
 end
 class TestChild3 < TestParent
+  extend ClassKit
   attr_accessor_type :text1, type: String
   attr_accessor_type :text2, type: String
+end
+
+class TestEmptyChild < TestParent
+  extend ClassKit
 end

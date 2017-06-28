@@ -9,16 +9,17 @@ module ClassKit
     attributes = instance_variable_get(:@class_kit_attributes)
 
     attributes[name] = { name: name, type: type, collection_type: collection_type, allow_nil: allow_nil,
-                                  default: default, auto_init: auto_init, meta: meta }
+                         default: default, auto_init: auto_init, meta: meta }
 
     class_eval do
       define_method name do
-        cka = self.class.instance_variable_get(:@class_kit_attributes)[name]
+
+        cka = ClassKit::AttributeHelper.instance.get_attribute(klass: self.class, name: name)
 
         current_value = instance_variable_get(:"@#{name}")
 
         if current_value.nil?
-          if cka[:default] != nil
+          if !cka[:default].nil?
             current_value = instance_variable_set(:"@#{name}", cka[:default])
           elsif cka[:auto_init]
             current_value = instance_variable_set(:"@#{name}", cka[:type].new)
@@ -31,20 +32,20 @@ module ClassKit
 
     class_eval do
       define_method "#{name}=" do |value|
-        #get the attribute meta data
+        # get the attribute meta data
         cka = ClassKit::AttributeHelper.instance.get_attribute(klass: self.class, name: name)
 
-        #verify if the attribute is allowed to be set to nil
+        # verify if the attribute is allowed to be set to nil
         if value.nil? && cka[:allow_nil] == false
-          raise ClassKit::Exceptions::InvalidAttributeValueError.new("Attribute: #{name}, must not be nil.")
+          raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must not be nil."
         end
 
-        #check if the value being set is not of the specified type and should attempt to parse the value
+        # check if the value being set is not of the specified type and should attempt to parse the value
         if !cka[:type].nil? && !value.nil? && (cka[:type] == :bool || !value.is_a?(cka[:type]))
           begin
             value = ClassKit::ValueHelper.instance.parse(type: cka[:type], value: value)
           rescue => e
-            raise ClassKit::Exceptions::InvalidAttributeValueError.new("Attribute: #{name}, must be of type: #{cka[:type]}. Error: #{e}")
+            raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must be of type: #{cka[:type]}. Error: #{e}"
           end
         end
 
