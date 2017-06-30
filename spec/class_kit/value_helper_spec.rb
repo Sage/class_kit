@@ -227,6 +227,12 @@ RSpec.describe ClassKit::ValueHelper do
             expect(value).to be_a(BigDecimal)
             expect(value).to eq BigDecimal('0.005')
           end
+
+          it 'should parse a negative value' do
+            value = subject.parse(type: BigDecimal, value: '-0.005')
+            expect(value).to be_a(BigDecimal)
+            expect(value).to eq BigDecimal('-0.005')
+          end
         end
         context 'BigDecimal' do
           it 'should parse the value' do
