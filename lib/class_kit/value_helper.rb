@@ -49,7 +49,7 @@ module ClassKit
           value
         else
           value = value.to_s
-          raise 'Unable to parse BigDecimal' unless value =~ /\A\d+(\.\d*)?/
+          raise 'Unable to parse BigDecimal' unless value =~ /\A-?\d+(\.\d*)?/
           BigDecimal(value)
         end
       elsif type == String
