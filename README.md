@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-###Creating an entity
+### Creating an entity
 
     class Contact
         extend ClassKit   
@@ -49,7 +49,7 @@ Or install it yourself as:
     
 ClassKit entities can be created by implementing the `extend ClassKit` extend into the entity class and then using the `attr_accessor_type` method to register attributes as above inplace of the standard ruby `attr_accessor` method.
 
-###attr_accessor_type
+### attr_accessor_type
 
 This method is used to add typed attributes to a class.
 
@@ -79,11 +79,11 @@ If an invalid value is passed to an attribute it will raise a `ClassKit::Excepti
 
 Attributes don't require the `type:` argument to be specified for attributes where type information is variable or not required.
 
-####Arrays
+#### Arrays
 
 The `attr_accessor_type` method allows attributes of type `Array` to be specified, these attributes can also specify the `collection_type:` argument to specify what the type the elements of the Array will be.
 
-####Additional Arguments
+#### Additional Arguments
 
 The below are additional arguments that can be specified when using the `attr_accessor_type` method.
 
@@ -92,7 +92,7 @@ The below are additional arguments that can be specified when using the `attr_ac
 - `default:` This argument is used to specify a default value that the attribute should be set to when nil.
 - `meta:` This argument is used to specify any additional meta information you want to attach to the attribute.
 
-###ClassKit::Helper
+### ClassKit::Helper
 
 This helper class provides several useful helper methods for working with ClassKit entities.
 
@@ -186,7 +186,7 @@ Would be parsed into the ClassKit `Employee` class defined above along with the 
 Allowing the `Address` to be accessed via `entity.address.line1` etc and the `Contact` details to be accessed via `entity.contacts[0].landline` etc.
 
 
-###ClassKit::AttributeHelper
+### ClassKit::AttributeHelper
 
 This helper class provides several useful methods for accessing the attribute details for a ClassKit entity.
 
