@@ -12,16 +12,29 @@ module ClassKit
                          default: default, auto_init: auto_init, meta: meta }
 
     class_eval do
-      define_method name do
+      def self.new( *args, &blk)
+        o = super # get the result of an existing initializer
+        attributes = o.class.instance_variable_get('@class_kit_attributes')
+        return o unless attributes
 
+        # add any default attributes to instance variables unless they already have a value
+        attributes.each_pair do |_, v|
+          current_value = o.public_send(v[:name])
+          # TODO: Do we want to allow nils to be serialized?
+          unless current_value
+            o.instance_variable_set( "@#{v[:name]}", v[:default]) if v[:default]
+          end
+        end
+        o
+      end
+
+      define_method name do
         cka = ClassKit::AttributeHelper.instance.get_attribute(klass: self.class, name: name)
 
         current_value = instance_variable_get(:"@#{name}")
 
         if current_value.nil?
-          if !cka[:default].nil?
-            current_value = instance_variable_set(:"@#{name}", cka[:default])
-          elsif cka[:auto_init]
+          if cka[:auto_init]
             current_value = instance_variable_set(:"@#{name}", cka[:type].new)
           end
         end

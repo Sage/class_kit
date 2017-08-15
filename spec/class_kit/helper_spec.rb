@@ -1,4 +1,5 @@
 require 'spec_helper'
+
 RSpec.describe ClassKit::Helper do
   describe '#validate_class_kit' do
     context 'when a class implements ClassKit is specified' do
@@ -30,6 +31,7 @@ RSpec.describe ClassKit::Helper do
         expect(hash[:postcode]).to eq(entity.postcode)
       end
     end
+
     context 'when an invalid class is specified' do
       let(:entity) do
         InvalidClass.new.tap do |e|
@@ -38,6 +40,39 @@ RSpec.describe ClassKit::Helper do
       end
       it 'should raise error' do
         expect{ subject.to_hash(entity) }.to raise_error(ClassKit::Exceptions::InvalidClassError)
+      end
+    end
+
+    context 'when defaults are used' do
+      let(:now) { Time.now }
+      let(:test_entity) do
+        now
+        t = TestWithDefaults.new
+        t.age = 18
+        t
+      end
+      let(:expected_attributes) { [:age, :name, :created_at, :variable_set_in_initializer] }
+
+      context 'when we call the defaulted attributes first' do
+        it 'default values are returned' do
+          # call the default attributes
+          test_entity.name
+          test_entity.created_at
+          expect(subject.to_hash(test_entity).keys).to match_array(expected_attributes)
+        end
+      end
+
+      context 'when we dont call the defaulted attributes' do
+        it 'default values are returned' do
+          expect(subject.to_hash(test_entity).keys).to match_array(expected_attributes)
+        end
+      end
+
+      describe 'Default timestamps' do
+        it 'should generate the default timestamp when the class is instantiated and not when the method is called' do
+          sleep(2)
+          expect(subject.to_hash(test_entity)[:created_at].to_i).to be_within(now.to_i + 1).of(now.to_i)
+        end
       end
     end
   end
@@ -150,10 +185,12 @@ RSpec.describe ClassKit::Helper do
                   ]
       }
     end
+
     it 'should convert the class to json' do
       result = subject.to_json(entity)
       expect(result).to be_a(String)
-      expect(result).to eq(JSON.dump(hash))
+      # Parsing everything to json to make the test easier to read if it fails.
+      expect(JSON.parse(result)).to eq(JSON.parse(JSON.dump(hash)))
     end
   end
 
