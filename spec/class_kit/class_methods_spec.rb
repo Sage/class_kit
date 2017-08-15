@@ -13,9 +13,17 @@ RSpec.describe ClassKit do
     TestEmptyChild.new
   end
 
-  it 'should have an instance variable for each default to allow .to_hash to work' do
-    t = TestWithDefaults.new
-    expect(t.instance_variables).to match_array([:@name, :@created_at])
+  context 'With an entity with defaults' do
+    subject { TestWithDefaults.new }
+
+    it 'should have an instance variable for each default to allow .to_hash to work' do
+      expect(subject.instance_variables).to match_array([:@age, :@name, :@created_at, :@variable_set_in_initializer])
+    end
+
+    it 'should still allow the class to set values in the initializer' do
+      expect(subject.name).to eq('New Name')
+      expect(subject.age).to eq(15)
+    end
   end
 
   context 'when setting the value of a base class attribute' do

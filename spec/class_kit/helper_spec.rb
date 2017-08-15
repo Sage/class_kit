@@ -51,7 +51,7 @@ RSpec.describe ClassKit::Helper do
         t.age = 18
         t
       end
-      let(:expected_attributes) { [:age, :name, :created_at] }
+      let(:expected_attributes) { [:age, :name, :created_at, :variable_set_in_initializer] }
 
       context 'when we call the defaulted attributes first' do
         it 'default values are returned' do
@@ -188,7 +188,10 @@ RSpec.describe ClassKit::Helper do
     it 'should convert the class to json' do
       result = subject.to_json(entity)
       expect(result).to be_a(String)
-      expect(result).to eq(JSON.dump(hash))
+      # require 'pry'; binding.pry
+      # expect(result).to eq(JSON.dump(hash))
+      # require 'pry'; binding.pry
+      expect(JSON.parse(result)).to eq(JSON.parse(JSON.dump(hash)))
     end
   end
 

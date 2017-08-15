@@ -2,7 +2,14 @@ class TestWithDefaults
   extend ClassKit
   attr_accessor_type :name, default: 'John Doe'
   attr_accessor_type :age
+  attr_accessor_type :address
   attr_accessor_type :created_at, type: Time, default: Time.now
+
+  def initialize
+    @variable_set_in_initializer = 'done'
+    @name = 'New Name'
+    @age = 15
+  end
 end
 
 class TestAddress
