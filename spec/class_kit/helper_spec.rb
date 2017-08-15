@@ -185,12 +185,11 @@ RSpec.describe ClassKit::Helper do
                   ]
       }
     end
+
     it 'should convert the class to json' do
       result = subject.to_json(entity)
       expect(result).to be_a(String)
-      # require 'pry'; binding.pry
-      # expect(result).to eq(JSON.dump(hash))
-      # require 'pry'; binding.pry
+      # Parsing everything to json to make the test easier to read if it fails.
       expect(JSON.parse(result)).to eq(JSON.parse(JSON.dump(hash)))
     end
   end
