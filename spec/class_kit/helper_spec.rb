@@ -1,4 +1,5 @@
 require 'spec_helper'
+
 RSpec.describe ClassKit::Helper do
   describe '#validate_class_kit' do
     context 'when a class implements ClassKit is specified' do
@@ -43,16 +44,20 @@ RSpec.describe ClassKit::Helper do
     end
 
     context 'when defaults are used' do
-      let(:expected_attributes) { [:age, :name] }
+      let(:now) { Time.now }
       let(:test_entity) do
+        now
         t = TestWithDefaults.new
         t.age = 18
         t
       end
+      let(:expected_attributes) { [:age, :name, :created_at] }
 
       context 'when we call the defaulted attributes first' do
         it 'default values are returned' do
-          expect(test_entity.name).to eq('John Doe')
+          # call the default attributes
+          test_entity.name
+          test_entity.created_at
           expect(subject.to_hash(test_entity).keys).to match_array(expected_attributes)
         end
       end
@@ -60,6 +65,13 @@ RSpec.describe ClassKit::Helper do
       context 'when we dont call the defaulted attributes' do
         it 'default values are returned' do
           expect(subject.to_hash(test_entity).keys).to match_array(expected_attributes)
+        end
+      end
+
+      describe 'Default timestamps' do
+        it 'should generate the default timestamp when the class is instantiated and not when the method is called' do
+          sleep(2)
+          expect(subject.to_hash(test_entity)[:created_at].to_i).to be_within(now.to_i + 1).of(now.to_i)
         end
       end
     end

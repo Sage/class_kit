@@ -2,6 +2,7 @@ class TestWithDefaults
   extend ClassKit
   attr_accessor_type :name, default: 'John Doe'
   attr_accessor_type :age
+  attr_accessor_type :created_at, type: Time, default: Time.now
 end
 
 class TestAddress
