@@ -13,6 +13,11 @@ RSpec.describe ClassKit do
     TestEmptyChild.new
   end
 
+  it 'should have an instance variable for each default to allow .to_hash to work' do
+    t = TestWithDefaults.new
+    expect(t.instance_variables).to match_array([:@name, :@created_at])
+  end
+
   context 'when setting the value of a base class attribute' do
     it 'should not error' do
       child_entity.base1 = 'hello world'
@@ -308,5 +313,3 @@ RSpec.describe ClassKit do
 
   end
 end
-
-

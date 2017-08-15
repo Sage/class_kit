@@ -12,8 +12,19 @@ module ClassKit
                          default: default, auto_init: auto_init, meta: meta }
 
     class_eval do
-      define_method name do
+      def self.new( *args, &blk)
+        o = allocate
+        attributes = o.class.instance_variable_get('@class_kit_attributes')
+        return o unless attributes
 
+        attributes.each_pair do |_, v|
+          # TODO: Do we want to allow nils to be serialized?
+          o.instance_variable_set( "@#{v[:name]}", v[:default]) if v[:default]
+        end
+        o
+      end
+
+      define_method name do
         cka = ClassKit::AttributeHelper.instance.get_attribute(klass: self.class, name: name)
 
         current_value = instance_variable_get(:"@#{name}")
