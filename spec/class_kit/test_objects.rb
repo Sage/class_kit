@@ -1,3 +1,9 @@
+class TestWithDefaults
+  extend ClassKit
+  attr_accessor_type :name, default: 'John Doe'
+  attr_accessor_type :age
+end
+
 class TestAddress
   extend ClassKit
   attr_accessor_type :line1, type: String

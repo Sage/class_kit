@@ -30,6 +30,7 @@ RSpec.describe ClassKit::Helper do
         expect(hash[:postcode]).to eq(entity.postcode)
       end
     end
+
     context 'when an invalid class is specified' do
       let(:entity) do
         InvalidClass.new.tap do |e|
@@ -38,6 +39,28 @@ RSpec.describe ClassKit::Helper do
       end
       it 'should raise error' do
         expect{ subject.to_hash(entity) }.to raise_error(ClassKit::Exceptions::InvalidClassError)
+      end
+    end
+
+    context 'when defaults are used' do
+      let(:expected_attributes) { [:age, :name] }
+      let(:test_entity) do
+        t = TestWithDefaults.new
+        t.age = 18
+        t
+      end
+
+      context 'when we call the defaulted attributes first' do
+        it 'default values are returned' do
+          expect(test_entity.name).to eq('John Doe')
+          expect(subject.to_hash(test_entity).keys).to match_array(expected_attributes)
+        end
+      end
+
+      context 'when we dont call the defaulted attributes' do
+        it 'default values are returned' do
+          expect(subject.to_hash(test_entity).keys).to match_array(expected_attributes)
+        end
       end
     end
   end
