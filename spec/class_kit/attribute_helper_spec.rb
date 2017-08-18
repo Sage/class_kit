@@ -4,7 +4,7 @@ RSpec.describe ClassKit::AttributeHelper do
     context 'when a class has NO polymorphism chain' do
       it 'should return all ClassKit attributes' do
         results = subject.get_attributes(TestAddress)
-        expect(results.length).to eq(3)
+        expect(results.length).to eq(4)
       end
     end
     context 'when a class DOES have a polymorphism chain' do

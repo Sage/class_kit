@@ -20,7 +20,31 @@ module ClassKit
     def to_hash(object)
       validate_class_kit(object.class)
 
-      @hash_helper.to_hash(object)
+      hash = {}
+
+      attributes = @attribute_helper.get_attributes(object.class)
+      attributes.each do |attribute|
+        key = attribute[:name]
+        type = attribute[:type]
+        value = object.public_send(key)
+        if value != nil
+          hash[key] = if is_class_kit?(type)
+                        to_hash(value)
+                      elsif type == Array
+                        value.map do |i|
+                          if is_class_kit?(i.class)
+                            to_hash(i)
+                          else
+                            i
+                          end
+                        end
+                      else
+                        value
+                      end
+        end
+      end
+      @hash_helper.indifferent!(hash)
+      hash
     end
 
     #This method is called to convert a Hash into a ClassKit object.
@@ -63,7 +87,7 @@ module ClassKit
 
     #This method is called to convert a ClassKit object into JSON.
     def to_json(object)
-      hash = @hash_helper.to_hash(object)
+      hash = to_hash(object)
       JSON.dump(hash)
     end
 
