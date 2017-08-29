@@ -3,6 +3,7 @@ class TestAddress
   attr_accessor_type :line1, type: String
   attr_accessor_type :line2
   attr_accessor_type :postcode
+  attr_accessor_type :country, type: String, default: 'United Kingdom'
 end
 
 class TestEntity

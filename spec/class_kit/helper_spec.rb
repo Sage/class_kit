@@ -28,6 +28,43 @@ RSpec.describe ClassKit::Helper do
         expect(hash[:line1]).to eq(entity.line1)
         expect(hash[:line2]).to eq(entity.line2)
         expect(hash[:postcode]).to eq(entity.postcode)
+        expect(hash[:country]).to eq(entity.country)
+      end
+    end
+    context 'when a valid class is specified with array attributes' do
+      let(:address1) do
+        TestAddress.new.tap do |e|
+          e.line1 = 'line1'
+          e.line2 = 'line2'
+          e.postcode = 'ne1 8rt'
+        end
+      end
+      let(:address2) do
+        TestAddress.new.tap do |e|
+          e.line1 = 'line1'
+          e.line2 = 'line2'
+          e.postcode = 'ne3 9rt'
+        end
+      end
+      let(:entity) do
+        TestEntity.new.tap do |e|
+          e.address_collection << address1
+          e.address_collection << address2
+        end
+      end
+      it 'should return a hash' do
+        hash = subject.to_hash(entity)
+        expect(hash).to be_a(Hash)
+        expect(hash[:address_collection]).to be_a(Array)
+        expect(hash[:address_collection].length).to eq 2
+
+        expect(hash[:address_collection][0][:line1]).to eq(address1.line1)
+        expect(hash[:address_collection][0][:line2]).to eq(address1.line2)
+        expect(hash[:address_collection][0][:postcode]).to eq(address1.postcode)
+
+        expect(hash[:address_collection][1][:line1]).to eq(address2.line1)
+        expect(hash[:address_collection][1][:line2]).to eq(address2.line2)
+        expect(hash[:address_collection][1][:postcode]).to eq(address2.postcode)
       end
     end
     context 'when an invalid class is specified' do
@@ -153,7 +190,10 @@ RSpec.describe ClassKit::Helper do
     it 'should convert the class to json' do
       result = subject.to_json(entity)
       expect(result).to be_a(String)
-      expect(result).to eq(JSON.dump(hash))
+      result_hash = JSON.load(result)
+      expect(result_hash['address']['post_code']).to eq(hash[:address][:post_code])
+      expect(result_hash['address_collection'].length).to eq(2)
+      expect(result_hash['address_collection'][0]['post_code']).to eq hash[:address_collection][0][:post_code]
     end
   end
 
