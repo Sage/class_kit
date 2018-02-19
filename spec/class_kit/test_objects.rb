@@ -6,6 +6,14 @@ class TestAddress
   attr_accessor_type :country, type: String, default: 'United Kingdom'
 end
 
+class TestAddressWithAlias
+  extend ClassKit
+  attr_accessor_type :line1, type: String, alias_name: :l1
+  attr_accessor_type :line2, alias_name: :l2
+  attr_accessor_type :postcode, alias_name: :pc
+  attr_accessor_type :country, type: String, default: 'United Kingdom', alias_name: :c
+end
+
 class TestEntity
   extend ClassKit
 

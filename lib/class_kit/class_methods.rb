@@ -1,15 +1,29 @@
 module ClassKit
-  def attr_accessor_type(name, type: nil, collection_type: nil, allow_nil: true, default: nil, auto_init: false,
-                         meta: {})
-
+  def attr_accessor_type(
+    name,
+    type: nil,
+    collection_type: nil,
+    allow_nil: true,
+    default: nil,
+    auto_init: false,
+    alias_name: nil,
+    meta: {})
     unless instance_variable_defined?(:@class_kit_attributes)
       instance_variable_set(:@class_kit_attributes, {})
     end
 
     attributes = instance_variable_get(:@class_kit_attributes)
 
-    attributes[name] = { name: name, type: type, collection_type: collection_type, allow_nil: allow_nil,
-                         default: default, auto_init: auto_init, meta: meta }
+    attributes[name] = {
+      name: name,
+      type: type,
+      collection_type: collection_type,
+      allow_nil: allow_nil,
+      default: default,
+      auto_init: auto_init,
+      alias: alias_name,
+      meta: meta
+    }
 
     class_eval do
       define_method name do

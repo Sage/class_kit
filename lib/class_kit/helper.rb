@@ -16,17 +16,17 @@ module ClassKit
                                     "Class: #{klass} does not implement ClassKit.")
     end
 
-    #This method is called to convert a ClassKit object into a Hash.
-    def to_hash(object)
+    # This method is called to convert a ClassKit object into a Hash.
+    def to_hash(object, use_alias = false)
       validate_class_kit(object.class)
 
       hash = {}
 
       attributes = @attribute_helper.get_attributes(object.class)
       attributes.each do |attribute|
-        key = attribute[:name]
+        key = use_alias ? (attribute[:alias] || attribute[:name]) : attribute[:name]
         type = attribute[:type]
-        value = object.public_send(key)
+        value = object.public_send(attribute[:name])
         if value != nil
           hash[key] = if is_class_kit?(type)
                         to_hash(value)
@@ -47,18 +47,18 @@ module ClassKit
       hash
     end
 
-    #This method is called to convert a Hash into a ClassKit object.
-    def from_hash(hash:, klass:)
+    # This method is called to convert a Hash into a ClassKit object.
+    def from_hash(hash:, klass:, use_alias: false)
       validate_class_kit(klass)
 
       @hash_helper.indifferent!(hash)
       entity = klass.new
       attributes = @attribute_helper.get_attributes(klass)
       attributes.each do |attribute|
-        key = attribute[:name]
+        key = use_alias ? (attribute[:alias] || attribute[:name]) : attribute[:name]
         type = attribute[:type]
 
-        #if the hash value is nil skip it
+        # if the hash value is nil skip it
         next if hash[key].nil?
 
         value = if is_class_kit?(type)
@@ -79,22 +79,22 @@ module ClassKit
                   hash[key]
                 end
 
-        entity.public_send(:"#{key}=", value)
+        entity.public_send(:"#{attribute[:name]}=", value)
       end
 
       entity
     end
 
-    #This method is called to convert a ClassKit object into JSON.
-    def to_json(object)
-      hash = to_hash(object)
+    # This method is called to convert a ClassKit object into JSON.
+    def to_json(object, use_alias = false)
+      hash = to_hash(object, use_alias)
       JSON.dump(hash)
     end
 
-    #This method is called to convert JSON into a ClassKit object.
-    def from_json(json:, klass:)
+    # This method is called to convert JSON into a ClassKit object.
+    def from_json(json:, klass:, use_alias: false)
       hash = JSON.load(json)
-      from_hash(hash: hash, klass: klass)
+      from_hash(hash: hash, klass: klass, use_alias: use_alias)
     end
   end
 end

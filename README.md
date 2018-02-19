@@ -49,6 +49,26 @@ Or install it yourself as:
     
 ClassKit entities can be created by implementing the `extend ClassKit` extend into the entity class and then using the `attr_accessor_type` method to register attributes as above inplace of the standard ruby `attr_accessor` method.
 
+ClassKit entity attributes can use a name alias in order to parse to/from hashes/json with different key names, see the example below:
+
+    class Address
+        extend ClassKit   
+             
+        attr_accessor_type :line1, type: String, alias_name: :l1
+        attr_accessor_type :line2, alias_name: :l2
+        attr_accessor_type :postcode, alias_name: :pc
+    end
+    
+    { "l1": "23 the street", "l2": "the town", "pc": "ne1 4rt" }
+
+To use alias names you must specify `use_alias = true` for the following helper methods:
+
+    helper.to_hash(entity, true)
+    helper.from_hash(hash: hash_object, klass: entity_klass, use_alias: true)
+    
+    helper.to_json(entity, true)
+    helper.from_json(json: json_string, klass: entity_klass, use_alias: true)
+
 ### attr_accessor_type
 
 This method is used to add typed attributes to a class.
@@ -111,12 +131,13 @@ Example:
 
     helper.is_class_kit?(obj)
 
-#### #to_hash(object)
+#### #to_hash(object, use_alias)
 
 This method is called to convert a ClassKit entity into a `Hash`.
 
 [Params]
-- `object` This is the ClassKit entity to convert.
+- `object` [Required] This is the ClassKit entity to convert.
+- `use_alias` [Optional] [Default=false] This is used to specify if attribute alias names should be used.
 
 [Return]
 
@@ -126,14 +147,15 @@ Example:
 
     hash = helper.to_hash(obj)
         
-#### #from_hash(hash:,klass:)
+#### #from_hash(hash:,klass:, use_alias:)
 
 This method is called to convert a `Hash` into a ClassKit entity.
 
 [Params]
-- `hash:` This is the `Hash` to convert.
-- `klass:` This is the class of the ClassKit entity you want to convert the `Hash` into. 
-(NOTE: It should be the fully qualified class name including modules)
+- `hash:` [Required] This is the `Hash` to convert.
+- `klass:` [Required] This is the class of the ClassKit entity you want to convert the `Hash` into. 
+> NOTE: It should be the fully qualified class name including modules
+- `use_alias` [Optional] [Default=false] This is used to specify if attribute alias names should be used.
 
 [Return]
 
@@ -143,12 +165,13 @@ Example:
 
     entity = helper.from_hash(hash: hsh, klass: Contact)
 
-#### #to_json(object)
+#### #to_json(object, use_alias)
 
 This method is called to convert a ClassKit entity into JSON.
 
 [Params]
 - `object` This is the ClassKit entity to convert.
+- `use_alias` [Optional] [Default=false] This is used to specify if attribute alias names should be used.
 
 [Return]
 
@@ -158,14 +181,15 @@ Example:
 
     json_string = helper.to_json(obj)
 
-#### #from_json(json:, klass:)
+#### #from_json(json:, klass:, use_alias:)
 
 This method is called to convert a JSON string into a ClassKit entity.
 
 [Params]
 - `json:` This is the JSON string to convert.
 - `klass:` This is the class of the ClassKit entity you want to convert the JSON into.
-(NOTE: It should be the fully qualified class name including modules)
+> NOTE: It should be the fully qualified class name including modules
+- `use_alias` [Optional] [Default=false] This is used to specify if attribute alias names should be used.
 
 [Return]
 

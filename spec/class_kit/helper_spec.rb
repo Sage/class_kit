@@ -31,6 +31,23 @@ RSpec.describe ClassKit::Helper do
         expect(hash[:country]).to eq(entity.country)
       end
     end
+    context 'when a valid class is specified with json aliases' do
+      let(:entity) do
+        TestAddressWithAlias.new.tap do |e|
+          e.line1 = 'line1'
+          e.line2 = 'line2'
+          e.postcode = 'ne1 8rt'
+        end
+      end
+      it 'should return a hash' do
+        hash = subject.to_hash(entity, true)
+        expect(hash).to be_a(Hash)
+        expect(hash[:l1]).to eq(entity.line1)
+        expect(hash[:l2]).to eq(entity.line2)
+        expect(hash[:pc]).to eq(entity.postcode)
+        expect(hash[:c]).to eq(entity.country)
+      end
+    end
     context 'when a valid class is specified with array attributes' do
       let(:address1) do
         TestAddress.new.tap do |e|
@@ -134,6 +151,24 @@ RSpec.describe ClassKit::Helper do
         expect(entity.address_collection.length).to eq(0)
       end
     end
+    context 'when a valid hash is specified with aliases' do
+      let(:hash) do
+        {
+          l1: 'line1',
+          l2: 'line2',
+          pc: 'ne1 4rt',
+          c: 'United Kingdom'
+        }
+      end
+      it 'should convert the hash' do
+        entity = subject.from_hash(hash: hash, klass: TestAddressWithAlias, use_alias: true)
+        expect(entity).not_to be_nil
+        expect(entity.line1).to eq hash[:l1]
+        expect(entity.line2).to eq hash[:l2]
+        expect(entity.postcode).to eq hash[:pc]
+        expect(entity.country).to eq hash[:c]
+      end
+    end
   end
 
   describe '#to_json' do
@@ -195,6 +230,24 @@ RSpec.describe ClassKit::Helper do
       expect(result_hash['address_collection'].length).to eq(2)
       expect(result_hash['address_collection'][0]['post_code']).to eq hash[:address_collection][0][:post_code]
     end
+    context 'when entity specifies aliases' do
+      let(:address) do
+        TestAddressWithAlias.new.tap do |a|
+          a.line1 = 'street 1'
+          a.line2 = 'street 2'
+          a.postcode = 'ne3 5rt'
+        end
+      end
+      it 'converts class to json using aliases' do
+        result = subject.to_json(address, true)
+        expect(result).to be_a(String)
+        result_hash = JSON.load(result)
+        expect(result_hash['l1']).to eq address.line1
+        expect(result_hash['l2']).to eq address.line2
+        expect(result_hash['pc']).to eq address.postcode
+        expect(result_hash['c']).to eq address.country
+      end
+    end
   end
 
   describe '#from_json' do
@@ -252,6 +305,23 @@ RSpec.describe ClassKit::Helper do
       expect(entity.address_collection[1].line1).to eq(hash[:address_collection][1][:line1])
       expect(entity.address_collection[1].line2).to eq(hash[:address_collection][1][:line2])
       expect(entity.address_collection[1].postcode).to eq(hash[:address_collection][1][:postcode])
+    end
+    context 'when entity has json aliases' do
+      let(:hash) do
+        {
+          l1: 'line1',
+          l2: 'line2',
+          pc: 'ne1 4rt',
+          c: 'United Kingdom'
+        }
+      end
+      it 'converts json into the relevant entity' do
+        entity = subject.from_json(json: json, klass: TestAddressWithAlias, use_alias: true)
+        expect(entity.line1).to eq(hash[:l1])
+        expect(entity.line2).to eq(hash[:l2])
+        expect(entity.postcode).to eq(hash[:pc])
+        expect(entity.country).to eq(hash[:c])
+      end
     end
   end
 end
