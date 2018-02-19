@@ -29,11 +29,11 @@ module ClassKit
         value = object.public_send(attribute[:name])
         if value != nil
           hash[key] = if is_class_kit?(type)
-                        to_hash(value)
+                        to_hash(value, use_alias)
                       elsif type == Array
                         value.map do |i|
                           if is_class_kit?(i.class)
-                            to_hash(i)
+                            to_hash(i, use_alias)
                           else
                             i
                           end
@@ -62,14 +62,14 @@ module ClassKit
         next if hash[key].nil?
 
         value = if is_class_kit?(type)
-                  from_hash(hash: hash[key], klass: type)
+                  from_hash(hash: hash[key], klass: type, use_alias: use_alias)
                 elsif type == Array
                   hash[key].map do |array_element|
                     if attribute[:collection_type].nil?
                       array_element
                     else
                       if is_class_kit?(attribute[:collection_type])
-                        from_hash(hash: array_element, klass: attribute[:collection_type])
+                        from_hash(hash: array_element, klass: attribute[:collection_type], use_alias: use_alias)
                       else
                         @value_helper.parse(type: attribute[:collection_type], value: array_element)
                       end
