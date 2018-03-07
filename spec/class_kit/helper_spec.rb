@@ -94,6 +94,26 @@ RSpec.describe ClassKit::Helper do
         expect{ subject.to_hash(entity) }.to raise_error(ClassKit::Exceptions::InvalidClassError)
       end
     end
+    context 'when an array is specified' do
+      context 'with valid class items' do
+        let(:entity) do
+          TestAddress.new.tap do |e|
+            e.line1 = 'line1'
+            e.line2 = 'line2'
+            e.postcode = 'ne1 8rt'
+          end
+        end
+        let(:array) do
+          [entity, entity, entity]
+        end
+        it 'returns an array of hashes' do
+          hash = subject.to_hash(array)
+          expect(hash).to be_a(Array)
+          expect(hash.length).to eq array.length
+          expect(hash[0][:line1]).to eq entity.line1
+        end
+      end
+    end
   end
 
   describe '#from_hash' do

@@ -18,6 +18,8 @@ module ClassKit
 
     # This method is called to convert a ClassKit object into a Hash.
     def to_hash(object, use_alias = false)
+      return object.map { |i| to_hash(i, use_alias) } if object.is_a?(Array)
+
       validate_class_kit(object.class)
 
       hash = {}
