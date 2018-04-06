@@ -1,16 +1,23 @@
 language: ruby
 rvm:
-- 2.3.0
-- 2.3.1
-
+  - 2.3.5
 cache: bundler
-
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+    > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - "./cc-test-reporter before-build"
+after_script:
+  - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"
 deploy:
   provider: rubygems
   api_key:
-    secure: "MYeZCI8j2iLvGb26A+aLoIZKg/cnVf/eVwJ1BKIt8e9vBz+FccjSOxASuJ+oJrlEcFNme8x/SEt6HA8//ID3m1DaOj6GK+Zj3fZYI2vVwJ3vIUDfqugdW4hkXTPixbdUf2hpISxfHRxeA3+1JFIjGPdJI8bcJOf7bbB5F/VsbRbIkaTQsj8EhpUsn3PpsV2qvP8CrRPTzU0Q3X4PVRTnaeV/bF8WCenmGsBNgEALjgR/gut2vogAP3j1zLIzxMw86gSxcexraPhYaT6pVnopjLFtJG6xHbv+R27ZKGlh3yx01ird7Frd1BGYD+Lh7Wsj1TxmTW3c2SGRHHJzZE6sgdVJqbAgccLOLsnQ4jVUYbdGxsptErwlAnD76SUM5L89sn6mq+RkljDenZ/aMvc8yu49atuTwsb73Ab1vwvfxFZw64Wv7zTDz6Ljn3TnGNIk1zqF7PrtSouAGrt0RpgMQwZmekppjMcKrr52xKoMtz0ImBD5ggqah52iajS6MlsG4fmPIlN6458SF36XabJzSv1Kih/8e9PpXANudrI91juMaIkEEQmCQSheVjXx9UleINgIF0/XVchK11BF0+iqAjZFHsaiSY7iaTr3oiv8FwQ1MQZeQdQ4b04qqzmJZz27dSm+Egp5cS+jN2iuC94SfDy54JmZaN/MRjWlCvPTX4g="
+    secure: MYeZCI8j2iLvGb26A+aLoIZKg/cnVf/eVwJ1BKIt8e9vBz+FccjSOxASuJ+oJrlEcFNme8x/SEt6HA8//ID3m1DaOj6GK+Zj3fZYI2vVwJ3vIUDfqugdW4hkXTPixbdUf2hpISxfHRxeA3+1JFIjGPdJI8bcJOf7bbB5F/VsbRbIkaTQsj8EhpUsn3PpsV2qvP8CrRPTzU0Q3X4PVRTnaeV/bF8WCenmGsBNgEALjgR/gut2vogAP3j1zLIzxMw86gSxcexraPhYaT6pVnopjLFtJG6xHbv+R27ZKGlh3yx01ird7Frd1BGYD+Lh7Wsj1TxmTW3c2SGRHHJzZE6sgdVJqbAgccLOLsnQ4jVUYbdGxsptErwlAnD76SUM5L89sn6mq+RkljDenZ/aMvc8yu49atuTwsb73Ab1vwvfxFZw64Wv7zTDz6Ljn3TnGNIk1zqF7PrtSouAGrt0RpgMQwZmekppjMcKrr52xKoMtz0ImBD5ggqah52iajS6MlsG4fmPIlN6458SF36XabJzSv1Kih/8e9PpXANudrI91juMaIkEEQmCQSheVjXx9UleINgIF0/XVchK11BF0+iqAjZFHsaiSY7iaTr3oiv8FwQ1MQZeQdQ4b04qqzmJZz27dSm+Egp5cS+jN2iuC94SfDy54JmZaN/MRjWlCvPTX4g=
   gem: class_kit
   on:
     tags: true
-    condition: "$TRAVIS_RUBY_VERSION == 2.3.1"
-
+    repo: Sage/class_kit
+    condition: "$TRAVIS_RUBY_VERSION == 2.3.5"
+env:
+  global:
+    secure: fCykytE63DqQklyblIaKWzzGRLF2YARA79dRADgjtW2mZu5XVFN7a1xeeF1dvgWbWryiIRUgc0+kQ60O7J3NqnM/TTzCqdfXIF/A4IpSrS60uy9Pidag4kb3O/gxKGI1Gy86czOEy9tbRdmo50YjFeCX99JseA0JFBDpi/lDu+gxiFjulAC1JBdIyu/xb9kzwZpNUhl9PJzbFQlwjRfDn8pOnFGlsotDgUW4S7BJXiaYhy2QSOW4cIq5iwIGVL9hgB5LjsBS62h0wAqCQWNBzSoHZopOg4vyDYDNPKA5auCx6C/+D04yzo3TT1XuvXpshuT324AGEvD7ziKgaOypiKFl6aZ0FAVRzcIt25uPzahab1JRD4b2m73A/Y7QDDBrMhZ28KaOB7H95PnBADc/9VDSyneoK8mYY98yoE1WsNrKELA2R/y7DzbXXVoZ8cy4RP+3Vq5Qb2prWmi7QxNaZx4SDXt/bbc1DYsubSdMib4k03BGNHHOQ/defigZDzsByeke/dJir8KAYkrRCXU2V0rzwKX3zmFmmG7I3sCUWo4fHf6LVG6fz1U4tIuT7QG5HoobQT3l+oU7cYeOdPzC9Si2A7q4a+VPYAsKzEnLgpKbYoc3228/IlCkDo3vlZpirDuAScxg9iceupt3qCEfFaLXtGbDlEvq3k9ht8vVJHc=
