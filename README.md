@@ -1,5 +1,10 @@
 # ClassKit
 
+[![Build Status](https://travis-ci.org/Sage/class_kit.svg?branch=master)](https://travis-ci.org/Sage/class_kit)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0bc83e414eed8759a0e8/maintainability)](https://codeclimate.com/github/Sage/class_kit/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/0bc83e414eed8759a0e8/test_coverage)](https://codeclimate.com/github/Sage/class_kit/test_coverage)
+[![Gem Version](https://badge.fury.io/rb/class_kit.svg)](https://badge.fury.io/rb/class_kit)
+
 Welcome to your ClassKit! ClassKit is a toolkit for working with entities & classes.
 
 ## Installation
@@ -12,62 +17,74 @@ gem 'class_kit'
 
 And then execute:
 
-    $ bundle
+```bash
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install class_kit
+```bash
+$ gem install class_kit
+```
 
 ## Usage
 
 ### Creating an entity
 
-    class Contact
-        extend ClassKit   
-             
-        attr_accessor_type :landline, type: String
-        attr_accessor_type :mobile, type: String
-        attr_accessor_type :email, type: String
-    end
-        
-    class Address
-        extend ClassKit   
-             
-        attr_accessor_type :line1, type: String
-        attr_accessor_type :line2
-        attr_accessor_type :postcode
-    end
-    
-    class Employee
-        extend ClassKit
-        
-        attr_accessor_type :name, type: String
-        attr_accessor_type :dob, type: Date
-        attr_accessor_type :address, type: Address, auto_init: true
-        attr_accessor_type :contacts, type: Array, collection_type: Contact, auto_init: true
-    end
-    
+```ruby
+class Contact
+  extend ClassKit
+
+  attr_accessor_type :landline, type: String
+  attr_accessor_type :mobile, type: String
+  attr_accessor_type :email, type: String
+end
+
+class Address
+  extend ClassKit
+
+  attr_accessor_type :line1, type: String
+  attr_accessor_type :line2
+  attr_accessor_type :postcode
+end
+
+class Employee
+  extend ClassKit
+
+  attr_accessor_type :name, type: String
+  attr_accessor_type :dob, type: Date
+  attr_accessor_type :address, type: Address, auto_init: true
+  attr_accessor_type :contacts, type: Array, collection_type: Contact, auto_init: true
+end
+```
+
 ClassKit entities can be created by implementing the `extend ClassKit` extend into the entity class and then using the `attr_accessor_type` method to register attributes as above inplace of the standard ruby `attr_accessor` method.
 
 ClassKit entity attributes can use a name alias in order to parse to/from hashes/json with different key names, see the example below:
 
-    class Address
-        extend ClassKit   
-             
-        attr_accessor_type :line1, type: String, alias_name: :l1
-        attr_accessor_type :line2, alias_name: :l2
-        attr_accessor_type :postcode, alias_name: :pc
-    end
-    
-    { "l1": "23 the street", "l2": "the town", "pc": "ne1 4rt" }
+```ruby
+class Address
+  extend ClassKit
+
+  attr_accessor_type :line1, type: String, alias_name: :l1
+  attr_accessor_type :line2, alias_name: :l2
+  attr_accessor_type :postcode, alias_name: :pc
+end
+```
+
+```json
+{ "l1": "23 the street", "l2": "the town", "pc": "ne1 4rt" }
+```
 
 To use alias names you must specify `use_alias = true` for the following helper methods:
 
-    helper.to_hash(entity, true)
-    helper.from_hash(hash: hash_object, klass: entity_klass, use_alias: true)
-    
-    helper.to_json(entity, true)
-    helper.from_json(json: json_string, klass: entity_klass, use_alias: true)
+```ruby
+helper.to_hash(entity, true)
+helper.from_hash(hash: hash_object, klass: entity_klass, use_alias: true)
+
+helper.to_json(entity, true)
+helper.from_json(json: json_string, klass: entity_klass, use_alias: true)
+```
 
 ### attr_accessor_type
 
@@ -85,12 +102,14 @@ Supported standard types:
 - :bool (true/false)
 - Regexp
 
-The above supported standard types will attempt to parse any values passed to the attribute if the value is not of the same type as the attribute. 
+The above supported standard types will attempt to parse any values passed to the attribute if the value is not of the same type as the attribute.
 
 Example:
 
-    entity.dob = '03-JUN-1980'
-    
+```
+entity.dob = '03-JUN-1980'
+```
+
 Would be parsed into a `Date` object and set to the attribute, so that subsequent calls to get the value from the attribute would return a `Date` object for the `entity.dob` value.
 
 Attributes can have any type specified, they are not limited to the standard types listed above, however only the standard types listed above will attempt to parse non type matching values when setting the attribute value.
@@ -129,7 +148,9 @@ This method is called to determine if an object is a ClassKit entity or not.
 
 Example:
 
-    helper.is_class_kit?(obj)
+```ruby
+helper.is_class_kit?(obj)
+```
 
 #### #to_hash(object, use_alias)
 
@@ -145,15 +166,17 @@ This method is called to convert a ClassKit entity into a `Hash`.
 
 Example:
 
-    hash = helper.to_hash(obj)
-        
+```ruby
+hash = helper.to_hash(obj)
+```
+
 #### #from_hash(hash:,klass:, use_alias:)
 
 This method is called to convert a `Hash` into a ClassKit entity.
 
 [Params]
 - `hash:` [Required] This is the `Hash` to convert.
-- `klass:` [Required] This is the class of the ClassKit entity you want to convert the `Hash` into. 
+- `klass:` [Required] This is the class of the ClassKit entity you want to convert the `Hash` into.
 > NOTE: It should be the fully qualified class name including modules
 - `use_alias` [Optional] [Default=false] This is used to specify if attribute alias names should be used.
 
@@ -163,7 +186,9 @@ ClassKit entity.
 
 Example:
 
-    entity = helper.from_hash(hash: hsh, klass: Contact)
+```ruby
+entity = helper.from_hash(hash: hsh, klass: Contact)
+```
 
 #### #to_json(object, use_alias)
 
@@ -179,7 +204,9 @@ JSON string.
 
 Example:
 
-    json_string = helper.to_json(obj)
+```ruby
+json_string = helper.to_json(obj)
+```
 
 #### #from_json(json:, klass:, use_alias:)
 
@@ -197,14 +224,18 @@ ClassKit entity.
 
 Example:
 
-    entity = helper.from_json(json: json_string, klass: Contact)
+```ruby
+entity = helper.from_json(json: json_string, klass: Contact)
+```
 
 NOTE: This method will parse any nested Hashes that match attributes specified with a type: that is a ClassKit entity, as well as populating `Arrays` where the `collection_type:` has been specified as a ClassKit entity.
 
 Example:
 
-    {"name":"Joe Bloggs","dob":"03-JUNE-1980","address":{"line1":"25 The Street","line2":"Home Town","postcode":"NE3 5RT"},"contacts":[{"landline":"01235456789","mobile":"0789456123","email":"joe.bloggs@test.com"}]}
-    
+```json
+{"name":"Joe Bloggs","dob":"03-JUNE-1980","address":{"line1":"25 The Street","line2":"Home Town","postcode":"NE3 5RT"},"contacts":[{"landline":"01235456789","mobile":"0789456123","email":"joe.bloggs@test.com"}]}
+```
+
 Would be parsed into the ClassKit `Employee` class defined above along with the nested `Address` attribute and `Contact` array.
 
 Allowing the `Address` to be accessed via `entity.address.line1` etc and the `Contact` details to be accessed via `entity.contacts[0].landline` etc.
@@ -252,7 +283,6 @@ This method is called to get an array of the Attribute details for a specified C
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/sage/class_kit. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
 
 ## License
 
