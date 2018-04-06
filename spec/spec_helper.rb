@@ -1,9 +1,14 @@
+require 'simplecov'
+SimpleCov.start do
+    add_filter 'spec/'
+end
+
 require 'pry'
 require 'hash_kit'
 require 'class_kit'
 require_relative 'class_kit/test_objects'
-RSpec.configure do |config|
 
+RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
