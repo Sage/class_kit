@@ -1,0 +1,17 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    class_kit (0.6.0)
+      hash_kit
+      json
+    hash_kit (0.6.0)
+    json (2.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  class_kit
+
+BUNDLED WITH
+   1.16.1

@@ -5,12 +5,18 @@ module ClassKit
       @instance ||= ClassKit::AttributeHelper.new
     end
 
+    def initialize
+      @attribute_store = {}
+    end
+
     # Get attributes for a given class
     #
     # @param klass [ClassKit] a class that has been extended with ClassKit
     #
     # @return [Hash]
     def get_attributes(klass)
+      return @attribute_store[klass] if @attribute_store.key?(klass)
+
       attributes = []
       klass.ancestors.map do |k|
         hash = k.instance_variable_get(:@class_kit_attributes)
@@ -20,7 +26,10 @@ module ClassKit
           end
         end
       end
-      attributes.compact
+      attributes.compact!
+
+      @attribute_store[klass] = attributes
+      attributes
     end
 
     # Get attribute for a given class and name
