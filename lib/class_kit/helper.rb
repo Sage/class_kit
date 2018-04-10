@@ -53,6 +53,8 @@ module ClassKit
     def from_hash(hash:, klass:, use_alias: false)
       validate_class_kit(klass)
 
+      return hash.map { |i| from_hash(hash: i, klass: klass, use_alias: use_alias) } if hash.is_a?(Array)
+
       @hash_helper.indifferent!(hash)
       entity = klass.new
       attributes = @attribute_helper.get_attributes(klass)
