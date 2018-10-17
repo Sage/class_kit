@@ -41,6 +41,19 @@ RSpec.describe ClassKit::ValueHelper do
             expect(value.sec).to be 0
           end
         end
+        context 'BigDecimal' do
+          let(:time) { BigDecimal(Time.parse('12-Mar-2016 11:00').to_i) }
+          it 'should parse the value' do
+            value = subject.parse(type: Time, value: time)
+            expect(value).to be_a(Time)
+            expect(value.year).to be 2016
+            expect(value.month).to be 3
+            expect(value.day).to be 12
+            expect(value.hour).to be 11
+            expect(value.min).to be 0
+            expect(value.sec).to be 0
+          end
+        end
         context 'Time' do
           let(:time) { Time.now }
           it 'should set the value to the time' do
