@@ -9,7 +9,7 @@ module ClassKit
       if type == Time
         if value.is_a?(Time)
           value
-        elsif value.is_a?(Integer) || value.is_a?(Float)
+        elsif value.is_a?(Integer) || value.is_a?(Float) || value.is_a?(BigDecimal)
           Time.at(value)
         else
           Time.parse(value)
