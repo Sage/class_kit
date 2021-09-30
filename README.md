@@ -122,6 +122,10 @@ Attributes don't require the `type:` argument to be specified for attributes whe
 
 The `attr_accessor_type` method allows attributes of type `Array` to be specified, these attributes can also specify the `collection_type:` argument to specify what the type the elements of the Array will be.
 
+#### Custom types
+
+ClassKit offers the CustomType module, which can be included to define attributes as custom types, while controlling how the serialisation and deserialisation of its values are handled via the implementation of the included methods.
+
 #### Additional Arguments
 
 The below are additional arguments that can be specified when using the `attr_accessor_type` method.

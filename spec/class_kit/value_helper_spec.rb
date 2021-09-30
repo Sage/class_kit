@@ -334,6 +334,15 @@ RSpec.describe ClassKit::ValueHelper do
         end
       end
     end
+    context 'when type: is CustomType' do
+      context 'and value is a valid CustomType' do
+        it 'should parse the value' do
+          value = subject.parse(type: TestCustomType, value: TestCustomType.new('foo'))
+          expect(value).to be_a(TestCustomType)
+          expect(value).to eq(TestCustomType.parse_assign('foo'))
+        end
+      end
+    end
   end
 
   describe '#instance' do

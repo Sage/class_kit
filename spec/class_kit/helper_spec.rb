@@ -13,6 +13,19 @@ RSpec.describe ClassKit::Helper do
     end
   end
 
+  describe '#is_class_kit_custom_type?' do
+    context 'when the argument includes ClassKit::CustomType' do
+      it 'should return true' do
+        expect(subject.is_class_kit_custom_type?(TestCustomType)).to be true
+      end
+    end
+    context 'when the argument does NOT include ClassKit::CustomType' do
+      it 'should return false' do
+        expect(subject.is_class_kit_custom_type?(String)).to be false
+      end
+    end
+  end
+
   describe '#to_hash' do
     context 'when a valid class is specified' do
       let(:entity) do
@@ -82,6 +95,18 @@ RSpec.describe ClassKit::Helper do
         expect(hash[:address_collection][1][:line1]).to eq(address2.line1)
         expect(hash[:address_collection][1][:line2]).to eq(address2.line2)
         expect(hash[:address_collection][1][:postcode]).to eq(address2.postcode)
+      end
+    end
+    context 'when a valid class is specified with custom types' do
+      let(:entity) do
+        TestEntityWithCustomType.new.tap do |e|
+          e.text = 'line1'
+        end
+      end
+      it 'should return a hash' do
+        hash = subject.to_hash(entity)
+        expect(hash).to be_a(Hash)
+        expect(hash[:text]).to eq(entity.text)
       end
     end
     context 'when an invalid class is specified' do
@@ -187,6 +212,18 @@ RSpec.describe ClassKit::Helper do
         expect(entity.line2).to eq hash[:l2]
         expect(entity.postcode).to eq hash[:pc]
         expect(entity.country).to eq hash[:c]
+      end
+    end
+    context 'when a valid hash is specified with custom types' do
+      let(:hash) do
+        {
+          text: 'line1'
+        }
+      end
+      it 'should convert the hash' do
+        entity = subject.from_hash(hash: hash, klass: TestEntityWithCustomType)
+        expect(entity).not_to be_nil
+        expect(entity.text).to eq TestCustomType.parse_from_hash(hash[:text])
       end
     end
   end

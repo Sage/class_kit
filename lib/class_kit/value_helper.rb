@@ -62,6 +62,8 @@ module ClassKit
       elsif type == Array
         raise 'Unable to parse Array' unless value.is_a?(Array)
         value
+      elsif type.include?(ClassKit::CustomType)
+        type.parse_assign(value)
       else
         raise 'Unable to parse'
       end

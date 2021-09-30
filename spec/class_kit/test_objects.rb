@@ -14,6 +14,27 @@ class TestAddressWithAlias
   attr_accessor_type :country, type: String, default: 'United Kingdom', alias_name: :c
 end
 
+class TestCustomType < String
+  include ClassKit::CustomType
+
+  def self.parse_from_hash(value)
+    self.new("#{value}_from_hash")
+  end
+
+  def self.parse_assign(value)
+    self.new("#{value}_from_assign")
+  end
+
+  def to_hash_value
+    self
+  end
+end
+
+class TestEntityWithCustomType
+  extend ClassKit
+  attr_accessor_type :text, type: TestCustomType
+end
+
 class TestEntity
   extend ClassKit
 
