@@ -1,6 +1,6 @@
 # ClassKit
 
-[![Build Status](https://travis-ci.org/Sage/class_kit.svg?branch=master)](https://travis-ci.org/Sage/class_kit)
+[![RSpec](https://github.com/Sage/class_kit/actions/workflows/rspec.yml/badge.svg)](https://github.com/Sage/class_kit/actions/workflows/rspec.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/0bc83e414eed8759a0e8/maintainability)](https://codeclimate.com/github/Sage/class_kit/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/0bc83e414eed8759a0e8/test_coverage)](https://codeclimate.com/github/Sage/class_kit/test_coverage)
 [![Gem Version](https://badge.fury.io/rb/class_kit.svg)](https://badge.fury.io/rb/class_kit)
