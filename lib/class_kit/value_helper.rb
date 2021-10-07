@@ -17,16 +17,12 @@ module ClassKit
       elsif type == Date
         if value.is_a?(Date)
           value
-        elsif value.is_a?(Integer)
-          Date.at(value)
         else
           Date.parse(value)
         end
       elsif type == DateTime
         if value.is_a?(DateTime)
           value
-        elsif value.is_a?(Integer)
-          DateTime.at(value)
         else
           DateTime.parse(value)
         end
