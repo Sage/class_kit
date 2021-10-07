@@ -35,6 +35,16 @@ class TestEntityWithCustomType
   attr_accessor_type :text, type: TestCustomType
 end
 
+class TestEntityWithArrayOfCustomTypes
+  extend ClassKit
+  attr_accessor_type :custom_type_collection, type: Array, collection_type: TestCustomType, allow_nil: false, auto_init: true
+end
+
+class TestEntityWithArrayWithoutType
+  extend ClassKit
+  attr_accessor_type :undefined_type_collection, type: Array, collection_type: nil
+end
+
 class TestEntity
   extend ClassKit
 
@@ -55,6 +65,7 @@ class TestEntity
   attr_accessor_type :address_auto, type: TestAddress, allow_nil: false, auto_init: true
 
   attr_accessor_type :address_collection, type: Array, collection_type: TestAddress, allow_nil: false, auto_init: true
+  attr_accessor_type :integer_collection, type: Array, collection_type: Integer, allow_nil: false, auto_init: true
 end
 
 class InvalidClass

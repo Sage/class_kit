@@ -1,7 +1,5 @@
 module ClassKit
   module CustomType
-    # :nocov:
-
     def self.included(base)
       base.extend(CustomType)
     end
@@ -20,7 +18,5 @@ module ClassKit
     def to_hash_value
       raise NotImplementedError
     end
-
-    # :nocov:
   end
 end
