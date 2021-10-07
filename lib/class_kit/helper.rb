@@ -11,6 +11,10 @@ module ClassKit
       klass.is_a?(ClassKit)
     end
 
+    def is_class_kit_custom_type?(klass)
+      !klass.nil? && klass != :bool && klass.include?(ClassKit::CustomType)
+    end
+
     def validate_class_kit(klass)
       is_class_kit?(klass) || raise(ClassKit::Exceptions::InvalidClassError,
                                     "Class: #{klass} does not implement ClassKit.")
@@ -32,10 +36,14 @@ module ClassKit
         if value != nil
           hash[key] = if is_class_kit?(type)
                         to_hash(value, use_alias)
+                      elsif is_class_kit_custom_type?(type)
+                        value.to_hash_value
                       elsif type == Array
                         value.map do |i|
                           if is_class_kit?(i.class)
                             to_hash(i, use_alias)
+                          elsif is_class_kit_custom_type?(i.class)
+                            i.to_hash_value
                           else
                             i
                           end
@@ -67,6 +75,8 @@ module ClassKit
 
         value = if is_class_kit?(type)
                   from_hash(hash: hash[key], klass: type, use_alias: use_alias)
+                elsif is_class_kit_custom_type?(type)
+                  type.parse_from_hash(hash[key])
                 elsif type == Array
                   hash[key].map do |array_element|
                     if attribute[:collection_type].nil?
@@ -74,6 +84,8 @@ module ClassKit
                     else
                       if is_class_kit?(attribute[:collection_type])
                         from_hash(hash: array_element, klass: attribute[:collection_type], use_alias: use_alias)
+                      elsif is_class_kit_custom_type?(attribute[:collection_type])
+                        attribute[:collection_type].parse_from_hash(array_element)
                       else
                         @value_helper.parse(type: attribute[:collection_type], value: array_element)
                       end

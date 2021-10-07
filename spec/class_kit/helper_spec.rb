@@ -13,6 +13,19 @@ RSpec.describe ClassKit::Helper do
     end
   end
 
+  describe '#is_class_kit_custom_type?' do
+    context 'when the argument includes ClassKit::CustomType' do
+      it 'should return true' do
+        expect(subject.is_class_kit_custom_type?(TestCustomType)).to be true
+      end
+    end
+    context 'when the argument does NOT include ClassKit::CustomType' do
+      it 'should return false' do
+        expect(subject.is_class_kit_custom_type?(String)).to be false
+      end
+    end
+  end
+
   describe '#to_hash' do
     context 'when a valid class is specified' do
       let(:entity) do
@@ -82,6 +95,33 @@ RSpec.describe ClassKit::Helper do
         expect(hash[:address_collection][1][:line1]).to eq(address2.line1)
         expect(hash[:address_collection][1][:line2]).to eq(address2.line2)
         expect(hash[:address_collection][1][:postcode]).to eq(address2.postcode)
+      end
+    end
+    context 'when a valid class is specified with custom types' do
+      let(:entity) do
+        TestEntityWithCustomType.new.tap do |e|
+          e.text = 'line1'
+        end
+      end
+      it 'should return a hash' do
+        hash = subject.to_hash(entity)
+        expect(hash).to be_a(Hash)
+        expect(hash[:text]).to eq(entity.text)
+      end
+    end
+    context 'when a valid class is specified with custom types in its array attributes' do
+      let(:custom_type_attr) { TestCustomType.new('test') }
+      let(:entity) do
+        TestEntityWithArrayOfCustomTypes.new.tap do |e|
+          e.custom_type_collection << custom_type_attr
+        end
+      end
+      it 'should return a hash' do
+        hash = subject.to_hash(entity)
+        expect(hash).to be_a(Hash)
+        expect(hash[:custom_type_collection]).to be_a(Array)
+        expect(hash[:custom_type_collection].length).to eq 1
+        expect(hash[:custom_type_collection][0]).to eq(custom_type_attr)
       end
     end
     context 'when an invalid class is specified' do
@@ -189,6 +229,48 @@ RSpec.describe ClassKit::Helper do
         expect(entity.country).to eq hash[:c]
       end
     end
+    context 'when a valid hash is specified with custom types' do
+      let(:hash) do
+        {
+          text: 'line1'
+        }
+      end
+      it 'should convert the hash' do
+        entity = subject.from_hash(hash: hash, klass: TestEntityWithCustomType)
+        expect(entity).not_to be_nil
+        expect(entity.text).to eq TestCustomType.parse_from_hash(hash[:text])
+      end
+    end
+    context 'when a valid hash is specified with an array of custom types' do
+      let(:hash) do
+        {
+          custom_type_collection: ['test', 'test2']
+        }
+      end
+      it 'should convert the hash' do
+        entity = subject.from_hash(hash: hash, klass: TestEntityWithArrayOfCustomTypes)
+        expect(entity).not_to be_nil
+        expect(entity.custom_type_collection).to be_a(Array)
+        expect(entity.custom_type_collection.length).to eq(2)
+        expect(entity.custom_type_collection[0]).to eq(TestCustomType.parse_from_hash(hash[:custom_type_collection][0]))
+        expect(entity.custom_type_collection[1]).to eq(TestCustomType.parse_from_hash(hash[:custom_type_collection][1]))
+      end
+    end
+    context 'when a valid hash is specified with an array with no collection_type' do
+      let(:hash) do
+        {
+          undefined_type_collection: ['test', 100]
+        }
+      end
+      it 'should convert the hash' do
+        entity = subject.from_hash(hash: hash, klass: TestEntityWithArrayWithoutType)
+        expect(entity).not_to be_nil
+        expect(entity.undefined_type_collection).to be_a(Array)
+        expect(entity.undefined_type_collection.length).to eq(2)
+        expect(entity.undefined_type_collection[0]).to eq(hash[:undefined_type_collection][0])
+        expect(entity.undefined_type_collection[1]).to eq(hash[:undefined_type_collection][1])
+      end
+    end
   end
 
   describe '#to_json' do
@@ -213,6 +295,7 @@ RSpec.describe ClassKit::Helper do
         e.address = address
         e.address_collection << address
         e.address_collection << address
+        e.integer_collection << 22
       end
     end
     let(:hash) do
@@ -239,7 +322,8 @@ RSpec.describe ClassKit::Helper do
                           line2: 'street 2',
                           postcode: 'ne3 5rt'
                       }
-                  ]
+                  ],
+          integer_collection: [22]
       }
     end
     it 'should convert the class to json' do
@@ -249,6 +333,7 @@ RSpec.describe ClassKit::Helper do
       expect(result_hash['address']['post_code']).to eq(hash[:address][:post_code])
       expect(result_hash['address_collection'].length).to eq(2)
       expect(result_hash['address_collection'][0]['post_code']).to eq hash[:address_collection][0][:post_code]
+      expect(result_hash['integer_collection'][0]).to eq hash[:integer_collection][0]
     end
     context 'when entity specifies aliases' do
       let(:address) do
@@ -298,7 +383,8 @@ RSpec.describe ClassKit::Helper do
                        line2: 'b street 2',
                        postcode: 'b ne3 5rt'
                    }
-               ]
+               ],
+          integer_collection: [22]
       }
     end
     let(:json) { JSON.dump(hash) }
@@ -325,6 +411,7 @@ RSpec.describe ClassKit::Helper do
       expect(entity.address_collection[1].line1).to eq(hash[:address_collection][1][:line1])
       expect(entity.address_collection[1].line2).to eq(hash[:address_collection][1][:line2])
       expect(entity.address_collection[1].postcode).to eq(hash[:address_collection][1][:postcode])
+      expect(entity.integer_collection[0]).to eq(hash[:integer_collection][0])
     end
     context 'when entity has json aliases' do
       let(:hash) do

@@ -1,6 +1,7 @@
 require_relative 'class_kit/class_methods'
 require_relative 'class_kit/exceptions'
 require_relative 'class_kit/attribute_helper'
+require_relative 'class_kit/custom_type'
 require_relative 'class_kit/value_helper'
 require_relative 'class_kit/helper'
 require_relative 'class_kit/version'

@@ -247,9 +247,16 @@ RSpec.describe ClassKit::ValueHelper do
             expect(value).to eq BigDecimal('-0.005')
           end
         end
-        context 'BigDecimal' do
+        context 'Float' do
           it 'should parse the value' do
             value = subject.parse(type: BigDecimal, value: 0.005)
+            expect(value).to be_a(BigDecimal)
+            expect(value).to eq BigDecimal.new('0.005')
+          end
+        end
+        context 'BigDecimal' do
+          it 'should parse the value' do
+            value = subject.parse(type: BigDecimal, value: 0.005.to_d)
             expect(value).to be_a(BigDecimal)
             expect(value).to eq BigDecimal.new('0.005')
           end
@@ -331,6 +338,15 @@ RSpec.describe ClassKit::ValueHelper do
       context 'and value is NOT valid' do
         it 'should raise a invalid parse value error' do
           expect{ subject.parse(type: Array, value: 'ABC') }.to raise_error(ClassKit::Exceptions::InvalidParseValueError)
+        end
+      end
+    end
+    context 'when type: is CustomType' do
+      context 'and value is a valid CustomType' do
+        it 'should parse the value' do
+          value = subject.parse(type: TestCustomType, value: TestCustomType.new('foo'))
+          expect(value).to be_a(TestCustomType)
+          expect(value).to eq(TestCustomType.parse_assign('foo'))
         end
       end
     end

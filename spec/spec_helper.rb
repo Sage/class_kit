@@ -6,6 +6,7 @@ end
 require 'pry'
 require 'hash_kit'
 require 'class_kit'
+require 'bigdecimal/util'
 require_relative 'class_kit/test_objects'
 
 RSpec.configure do |config|

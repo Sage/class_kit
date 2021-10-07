@@ -17,16 +17,12 @@ module ClassKit
       elsif type == Date
         if value.is_a?(Date)
           value
-        elsif value.is_a?(Integer)
-          Date.at(value)
         else
           Date.parse(value)
         end
       elsif type == DateTime
         if value.is_a?(DateTime)
           value
-        elsif value.is_a?(Integer)
-          DateTime.at(value)
         else
           DateTime.parse(value)
         end
@@ -62,6 +58,8 @@ module ClassKit
       elsif type == Array
         raise 'Unable to parse Array' unless value.is_a?(Array)
         value
+      elsif type.include?(ClassKit::CustomType)
+        type.parse_assign(value)
       else
         raise 'Unable to parse'
       end

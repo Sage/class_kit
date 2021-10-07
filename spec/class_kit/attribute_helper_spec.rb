@@ -29,6 +29,9 @@ RSpec.describe ClassKit::AttributeHelper do
         expect(attribute[:name]).to eq(:child1)
       end
     end
+    it 'will raise an Error if the attribute cannot be found' do
+        expect { subject.get_attribute(klass: TestChild, name: :doesnotexist) }.to raise_error(ClassKit::Exceptions::AttributeNotFoundError)
+    end
   end
   describe '#get_attribute_type' do
     context 'when a class has NO polymorphism chain' do

@@ -14,6 +14,37 @@ class TestAddressWithAlias
   attr_accessor_type :country, type: String, default: 'United Kingdom', alias_name: :c
 end
 
+class TestCustomType < String
+  include ClassKit::CustomType
+
+  def self.parse_from_hash(value)
+    self.new("#{value}_from_hash")
+  end
+
+  def self.parse_assign(value)
+    self.new("#{value}_from_assign")
+  end
+
+  def to_hash_value
+    self
+  end
+end
+
+class TestEntityWithCustomType
+  extend ClassKit
+  attr_accessor_type :text, type: TestCustomType
+end
+
+class TestEntityWithArrayOfCustomTypes
+  extend ClassKit
+  attr_accessor_type :custom_type_collection, type: Array, collection_type: TestCustomType, allow_nil: false, auto_init: true
+end
+
+class TestEntityWithArrayWithoutType
+  extend ClassKit
+  attr_accessor_type :undefined_type_collection, type: Array, collection_type: nil
+end
+
 class TestEntity
   extend ClassKit
 
@@ -34,6 +65,7 @@ class TestEntity
   attr_accessor_type :address_auto, type: TestAddress, allow_nil: false, auto_init: true
 
   attr_accessor_type :address_collection, type: Array, collection_type: TestAddress, allow_nil: false, auto_init: true
+  attr_accessor_type :integer_collection, type: Array, collection_type: Integer, allow_nil: false, auto_init: true
 end
 
 class InvalidClass
