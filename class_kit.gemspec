@@ -1,10 +1,33 @@
+# lib = File.expand_path('../lib', __FILE__)
+# $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+# require 'class_kit/version'
+# TODO: remove version file from lib/class_kit/version
+
 lib = File.expand_path('../lib', __FILE__)
+
+version = ''
+
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'class_kit/version'
+
+if ENV['GITHUB_REF_NAME'] != nil
+  puts "CI Branch - #{ENV['GITHUB_REF_NAME']}"
+  version = ENV['GITHUB_REF_NAME']
+end
+
+if version.downcase.match /^v/
+  version = version.dup
+  version.slice!(0)
+elsif version.downcase.match /^build/
+  # allow none release tags to build alpha, beta, dev versions of the gem.
+  version = "0.0.0.#{ENV['GITHUB_REF_NAME']}"
+else
+  version = '0.0.0'
+end
+
 
 Gem::Specification.new do |spec|
   spec.name          = 'class_kit'
-  spec.version       = ClassKit::VERSION
+  spec.version       = version
   spec.authors       = ['Sage One']
   spec.email         = ['vaughan.britton@sage.com']
 

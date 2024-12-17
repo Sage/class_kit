@@ -1,23 +1,55 @@
 name: Publish Gem
-on:
-  release:
-    types:
-      - "created"
+on: [push]
+
+env:
+  BUNDLE_SAGEONEGEMS__JFROG__IO: ${{ secrets.BUNDLE_SAGEONEGEMS__JFROG__IO }}
 
 jobs:
-  publish:
+  test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.4
+          bundler-cache: true
 
-      - name: Publish to RubyGems
+      - name: Run tests
+        run: bundle exec rspec
+
+      - name: Code Coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageLocations: |
+            ${{github.workspace}}/coverage/.resultset.json:simplecov
+
+  release:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/tags/build-')
+    name: Build and Publish gem
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Ruby 2.7
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+      - run: bundle exec rake build class_kit.gemspec
+
+      - name: Publish to JFrog
         run: |
           mkdir -p $HOME/.gem
-          touch $HOME/.gem/credentials
+          curl -u $JFROG_USER:$JFROG_PASS $RUBYGEMS_HOST/api/v1/api_key.yaml > $HOME/.gem/credentials
           chmod 0600 $HOME/.gem/credentials
-          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
-          gem build class_kit.gemspec
-          gem push class_kit-*.gem
+          gem push $GEMS_PATH
         env:
-          GEM_HOST_API_KEY: "${{secrets.RUBYGEMS_AUTH_TOKEN}}"
+          JFROG_USER: "${{secrets.JFROG_USER}}"
+          JFROG_PASS: "${{secrets.JFROG_PASS}}"
+          RUBYGEMS_HOST: "https://sageonegems.jfrog.io/sageonegems/api/gems/gems-local"
+          GEMS_PATH: "pkg/*.gem"
