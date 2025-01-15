@@ -56,15 +56,27 @@ module ClassKit
           raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must not be nil."
         end
 
-        if !cka[:one_of].nil? && !value.nil? && ([Hash, String].any? { |t| value.is_a?(t) })
-          type = cka[:one_of].detect { |t| value.is_a?(t) }
-          value = ClassKit::ValueHelper.instance.parse(type: type, value: value)
-        end
+        if !cka[:one_of].nil? && !value.nil?
+          parsed_value =
+          if value == true || value == false
+            value
+          elsif(/(true|t|yes|y|1)$/i === value.to_s.downcase)
+            true
+          elsif (/(false|f|no|n|0)$/i === value.to_s.downcase)
+            false
+          end
 
-        puts '-' * 50
-        puts "#{cka}"
-        puts "Value: #{value}"
-        puts '-' * 50
+          if parsed_value != nil
+            value = parsed_value
+          else
+            begin
+              type = cka[:one_of].detect {|t| value.is_a?(t) }
+              value = ClassKit::ValueHelper.instance.parse(type: type, value: value)
+            rescue => e
+              raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must be of type: #{type}. Error: #{e}"
+            end
+          end
+        end
 
         if !cka[:type].nil? && !value.nil? && (cka[:type] == :bool || !value.is_a?(cka[:type]))
           begin

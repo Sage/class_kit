@@ -232,6 +232,7 @@ RSpec.describe ClassKit::ValueHelper do
         end
       end
     end
+
     context 'when type: is BigDecimal' do
       context 'and value is a valid' do
         context 'String' do
@@ -247,27 +248,31 @@ RSpec.describe ClassKit::ValueHelper do
             expect(value).to eq BigDecimal('-0.005')
           end
         end
+
         context 'Float' do
           it 'should parse the value' do
             value = subject.parse(type: BigDecimal, value: 0.005)
             expect(value).to be_a(BigDecimal)
-            expect(value).to eq BigDecimal.new('0.005')
+            expect(value).to eq BigDecimal('0.005')
           end
         end
+
         context 'BigDecimal' do
           it 'should parse the value' do
             value = subject.parse(type: BigDecimal, value: 0.005.to_d)
             expect(value).to be_a(BigDecimal)
-            expect(value).to eq BigDecimal.new('0.005')
+            expect(value).to eq BigDecimal('0.005')
           end
         end
       end
+
       context 'and value is NOT valid' do
         it 'should raise a invalid parse value error' do
           expect{ subject.parse(type: BigDecimal, value: 'ABC') }.to raise_error(ClassKit::Exceptions::InvalidParseValueError)
         end
       end
     end
+
     context 'when type: is String' do
       context 'and value is a valid' do
         context 'String' do
@@ -286,6 +291,7 @@ RSpec.describe ClassKit::ValueHelper do
         end
       end
     end
+
     context 'when type: is Regexp' do
       context 'and value is a valid' do
         context 'String' do
@@ -295,6 +301,7 @@ RSpec.describe ClassKit::ValueHelper do
             expect(value).to eq /[\w\s]+/
           end
         end
+
         context 'Regexp' do
           it 'should parse the value' do
             value = subject.parse(type: Regexp, value: /[\w\s]+/)
@@ -303,12 +310,14 @@ RSpec.describe ClassKit::ValueHelper do
           end
         end
       end
+
       context 'and value is NOT valid' do
         it 'should raise a invalid parse value error' do
           expect{ subject.parse(type: Regexp, value: TestEntity.new) }.to raise_error(ClassKit::Exceptions::InvalidParseValueError)
         end
       end
     end
+
     context 'when type: is Hash' do
       context 'and value is a valid' do
         context 'Hash' do
@@ -319,12 +328,14 @@ RSpec.describe ClassKit::ValueHelper do
           end
         end
       end
+
       context 'and value is NOT valid' do
         it 'should raise a invalid parse value error' do
           expect{ subject.parse(type: Hash, value: 'ABC') }.to raise_error(ClassKit::Exceptions::InvalidParseValueError)
         end
       end
     end
+
     context 'when type: is Array' do
       context 'and value is a valid' do
         context 'Hash' do
@@ -335,12 +346,14 @@ RSpec.describe ClassKit::ValueHelper do
           end
         end
       end
+
       context 'and value is NOT valid' do
         it 'should raise a invalid parse value error' do
           expect{ subject.parse(type: Array, value: 'ABC') }.to raise_error(ClassKit::Exceptions::InvalidParseValueError)
         end
       end
     end
+
     context 'when type: is CustomType' do
       context 'and value is a valid CustomType' do
         it 'should parse the value' do
