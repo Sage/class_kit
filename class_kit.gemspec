@@ -19,10 +19,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_development_dependency 'bundler', '~> 2'
-  spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec'
-  spec.add_development_dependency 'simplecov', '< 0.18.0'
+  spec.add_development_dependency 'simplecov', ' ~> 0.22.0'
+  spec.add_development_dependency 'simplecov_json_formatter'
 
   spec.add_dependency 'hash_kit'
   spec.add_dependency 'json'
