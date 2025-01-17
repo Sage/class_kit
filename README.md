@@ -9,7 +9,7 @@ Welcome to your ClassKit! ClassKit is a toolkit for working with entities & clas
 
 ## Installation
 
-Add this line to your application's Gemfile: 
+Add this line to your application's Gemfile:
 
 ```ruby
 gem 'class_kit'
