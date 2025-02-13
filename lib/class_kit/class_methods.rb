@@ -3,6 +3,7 @@ module ClassKit
     name,
     type: nil,
     collection_type: nil,
+    one_of: nil,
     allow_nil: true,
     default: nil,
     auto_init: false,
@@ -17,6 +18,7 @@ module ClassKit
     attributes[name] = {
       name: name,
       type: type,
+      one_of: one_of,
       collection_type: collection_type,
       allow_nil: allow_nil,
       default: default,
@@ -54,7 +56,28 @@ module ClassKit
           raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must not be nil."
         end
 
-        # check if the value being set is not of the specified type and should attempt to parse the value
+        if !cka[:one_of].nil? && !value.nil?
+          parsed_value =
+          if value == true || value == false
+            value
+          elsif(/(true|t|yes|y|1)$/i === value.to_s.downcase)
+            true
+          elsif (/(false|f|no|n|0)$/i === value.to_s.downcase)
+            false
+          end
+
+          if parsed_value != nil
+            value = parsed_value
+          else
+            begin
+              type = cka[:one_of].detect {|t| value.is_a?(t) }
+              value = ClassKit::ValueHelper.instance.parse(type: type, value: value)
+            rescue => e
+              raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must be of type: #{type}. Error: #{e}"
+            end
+          end
+        end
+
         if !cka[:type].nil? && !value.nil? && (cka[:type] == :bool || !value.is_a?(cka[:type]))
           begin
             value = ClassKit::ValueHelper.instance.parse(type: cka[:type], value: value)

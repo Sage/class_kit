@@ -20,7 +20,7 @@ RSpec.describe ClassKit do
   end
 
   context 'when a child entity is empty' do
-    it 'class_kit_attributes are avaiable' do
+    it 'class_kit_attributes are available' do
       expect{ empty_child_entity.base1 }.not_to raise_error
     end
   end
@@ -35,6 +35,7 @@ RSpec.describe ClassKit do
         expect(test_entity.int).to be 10
       end
     end
+
     context 'when an attribute is NOT allowed to be nil' do
       context 'when attempting to set the value to nil' do
         it 'should raise an invalid attribute value error' do
@@ -42,6 +43,7 @@ RSpec.describe ClassKit do
         end
       end
     end
+
     context 'when an attribute is allowed to be nil' do
       it 'should not raise an error when setting to nil' do
         expect{ test_entity.int_nil = nil }.not_to raise_error
@@ -57,6 +59,7 @@ RSpec.describe ClassKit do
             expect(test_entity.int).to eq(20)
           end
         end
+
         context 'from a string' do
           context 'that can be parsed' do
             it 'should parse and set the value' do
@@ -64,6 +67,7 @@ RSpec.describe ClassKit do
               expect(test_entity.int).to eq(20)
             end
           end
+
           context 'that can NOT be parsed' do
             it 'should raise an error' do
               expect{ test_entity.int = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
@@ -81,6 +85,7 @@ RSpec.describe ClassKit do
             expect(test_entity.float).to eq(0.05)
           end
         end
+
         context 'from a string' do
           context 'that can be parsed' do
             it 'should parse and set the value' do
@@ -88,6 +93,7 @@ RSpec.describe ClassKit do
               expect(test_entity.float).to eq(0.05)
             end
           end
+
           context 'that can NOT be parsed' do
             it 'should raise an error' do
               expect{ test_entity.float = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
@@ -106,6 +112,7 @@ RSpec.describe ClassKit do
             expect(test_entity.date).to eq(date)
           end
         end
+
         context 'from a string' do
           context 'that can be parsed' do
             let(:date) { Date.today }
@@ -114,6 +121,7 @@ RSpec.describe ClassKit do
               expect(test_entity.date).to eq(date)
             end
           end
+
           context 'that can NOT be parsed' do
             it 'should raise an error' do
               expect{ test_entity.date = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
@@ -132,6 +140,7 @@ RSpec.describe ClassKit do
             expect(test_entity.datetime).to eq(datetime)
           end
         end
+
         context 'from a string' do
           context 'that can be parsed' do
             let(:datetime) { DateTime.now }
@@ -140,6 +149,7 @@ RSpec.describe ClassKit do
               expect(test_entity.datetime).to eq(datetime)
             end
           end
+
           context 'that can NOT be parsed' do
             it 'should raise an error' do
               expect{ test_entity.datetime = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
@@ -158,6 +168,7 @@ RSpec.describe ClassKit do
             expect(test_entity.time).to eq(time)
           end
         end
+
         context 'from an integer' do
           let(:time) { Time.now }
           it 'should set the value' do
@@ -165,6 +176,7 @@ RSpec.describe ClassKit do
             expect(test_entity.time.to_i).to eq(time.to_i)
           end
         end
+
         context 'from a float' do
           let(:time) { Time.now }
           it 'should set the value' do
@@ -172,6 +184,7 @@ RSpec.describe ClassKit do
             expect(test_entity.time.to_f).to eq(time.to_f)
           end
         end
+
         context 'from a string' do
           context 'that can be parsed' do
             let(:time) { Time.now }
@@ -180,6 +193,7 @@ RSpec.describe ClassKit do
               expect(test_entity.time).to eq(time)
             end
           end
+
           context 'that can NOT be parsed' do
             it 'should raise an error' do
               expect{ test_entity.time = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
@@ -207,22 +221,26 @@ RSpec.describe ClassKit do
             expect{ test_entity.bool = true }.not_to raise_error
             expect(test_entity.bool).to eq(true)
           end
+
           it 'should set the value to false' do
             expect{ test_entity.bool = false }.not_to raise_error
             expect(test_entity.bool).to eq(false)
           end
         end
+
         context 'from a string' do
           context 'that can be parsed' do
             it 'should parse and set the value to true' do
               expect{ test_entity.bool = 'true' }.not_to raise_error
               expect(test_entity.bool).to eq(true)
             end
+
             it 'should parse and set the value to false' do
               expect{ test_entity.bool = 'false' }.not_to raise_error
               expect(test_entity.bool).to eq(false)
             end
           end
+
           context 'that can NOT be parsed' do
             it 'should raise an error' do
               expect{ test_entity.bool = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
@@ -240,12 +258,14 @@ RSpec.describe ClassKit do
           end
         end
       end
+
       context 'when allowed to be nil' do
         it 'should not raise an error when setting to nil' do
           expect{ test_entity.any_nil = nil }.not_to raise_error
           expect(test_entity.any_nil).to be nil
         end
       end
+
       it 'should allow any value type to be specified' do
         expect{ test_entity.any = 'hello' }.not_to raise_error
         expect{ test_entity.any = 5 }.not_to raise_error
@@ -260,6 +280,7 @@ RSpec.describe ClassKit do
             expect{ test_entity.hash = { key1: 'value1' } }.not_to raise_error
           end
         end
+
         context 'from a String' do
           it 'should raise an error' do
             expect{ test_entity.hash = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
@@ -275,9 +296,33 @@ RSpec.describe ClassKit do
             expect{ test_entity.array = ['value1', 'value2'] }.not_to raise_error
           end
         end
+
         context 'from a String' do
           it 'should raise an error' do
             expect{ test_entity.array = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
+          end
+        end
+      end
+    end
+
+    context 'one_of attribute specified' do
+      context 'when setting the attribute value' do
+        context 'from an Array' do
+          it 'should set the value' do
+            expect{ test_entity.one_of = ['Happy Days'] }.not_to raise_error
+          end
+        end
+
+        context 'from a Hash' do
+          it 'should set the value' do
+            expect{ test_entity.one_of = { 'some' => 'structured data' } }.not_to raise_error
+          end
+        end
+
+        context 'from boolean' do
+          it 'should parse and set the value to false' do
+            expect{ test_entity.one_of = 'false' }.not_to raise_error
+            expect(test_entity.one_of).to eq(false)
           end
         end
       end
@@ -290,12 +335,14 @@ RSpec.describe ClassKit do
             expect{ test_entity.address = TestAddress.new }.not_to raise_error
           end
         end
+
         context 'from a String' do
           it 'should raise an error' do
             expect{ test_entity.address = 'ABC' }.to raise_error(ClassKit::Exceptions::InvalidAttributeValueError)
           end
         end
       end
+
       context 'when auto_init is true' do
         context 'and the attribute has not been set' do
           it 'should return a new instance of the attribute type' do
@@ -305,8 +352,5 @@ RSpec.describe ClassKit do
         end
       end
     end
-
   end
 end
-
-
