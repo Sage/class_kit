@@ -24,6 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'simplecov', ' ~> 0.22.0'
   spec.add_development_dependency 'simplecov_json_formatter'
 
+  spec.add_dependency 'bigdecimal'
   spec.add_dependency 'hash_kit'
   spec.add_dependency 'json'
 end
