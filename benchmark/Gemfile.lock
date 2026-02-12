@@ -1,17 +1,29 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    class_kit (0.6.0)
+    benchmark (0.5.0)
+    bigdecimal (4.0.1)
+    class_kit (0.9.1)
+      bigdecimal
       hash_kit
       json
-    hash_kit (0.6.0)
-    json (2.1.0)
+    hash_kit (0.7.0)
+    json (2.18.1)
 
 PLATFORMS
   ruby
+  x86_64-darwin-25
 
 DEPENDENCIES
+  benchmark
   class_kit
 
+CHECKSUMS
+  benchmark (0.5.0) sha256=465df122341aedcb81a2a24b4d3bd19b6c67c1530713fd533f3ff034e419236c
+  bigdecimal (4.0.1) sha256=8b07d3d065a9f921c80ceaea7c9d4ae596697295b584c296fe599dd0ad01c4a7
+  class_kit (0.9.1) sha256=0b31f65130a2b99807883cbf211e8d22d5f10f0f5a7beb3ff8336a51a62db0b2
+  hash_kit (0.7.0) sha256=9ff39a55fb4df2ebf524751862f2178d1778cbaab3812ef7bddfb26f55d0f90c
+  json (2.18.1) sha256=fe112755501b8d0466b5ada6cf50c8c3f41e897fa128ac5d263ec09eedc9f986
+
 BUNDLED WITH
-   1.16.1
+  4.0.4
