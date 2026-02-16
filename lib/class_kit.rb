@@ -1,3 +1,4 @@
+require_relative 'class_kit/constants'
 require_relative 'class_kit/class_methods'
 require_relative 'class_kit/exceptions'
 require_relative 'class_kit/attribute_helper'
@@ -10,4 +11,3 @@ require 'json'
 require 'date'
 require 'bigdecimal'
 require 'time'
-
