@@ -8,15 +8,18 @@ module ClassKit
     default: nil,
     auto_init: false,
     alias_name: nil,
-    meta: {})
-    unless instance_variable_defined?(:@class_kit_attributes)
-      instance_variable_set(:@class_kit_attributes, {})
-    end
+    meta: {}
+  )
+    instance_variable_set(:@class_kit_attributes, {}) unless instance_variable_defined?(:@class_kit_attributes)
 
     attributes = instance_variable_get(:@class_kit_attributes)
 
-    attributes[name] = {
+    getter = :"@#{name}"
+    setter = :"#{name}="
+
+    cka = {
       name: name,
+      setter: setter,
       type: type,
       one_of: one_of,
       collection_type: collection_type,
@@ -25,68 +28,104 @@ module ClassKit
       auto_init: auto_init,
       alias: alias_name,
       meta: meta
-    }
+    }.freeze
+    attributes[name] = cka
 
-    class_eval do
-      define_method name do
+    value_helper = ClassKit::ValueHelper.instance
 
-        cka = ClassKit::AttributeHelper.instance.get_attribute(klass: self.class, name: name)
+    # ========= Define attribute getter =========
+    if !default.nil? || auto_init
+      class_eval do
+        define_method name do
+          current_value = instance_variable_get(getter)
 
-        current_value = instance_variable_get(:"@#{name}")
-
-        if current_value.nil?
-          if !cka[:default].nil?
-            current_value = instance_variable_set(:"@#{name}", cka[:default])
-          elsif cka[:auto_init]
-            current_value = instance_variable_set(:"@#{name}", cka[:type].new)
+          if current_value.nil?
+            if !cka[:default].nil?
+              current_value = instance_variable_set(getter, cka[:default])
+            elsif cka[:auto_init]
+              current_value = instance_variable_set(getter, cka[:type].new)
+            end
           end
-        end
 
-        current_value
+          current_value
+        end
+      end
+    else
+      # no default or auto_init: just return the variable
+      class_eval do
+        define_method(name) do
+          instance_variable_get(getter)
+        end
       end
     end
 
-    class_eval do
-      define_method "#{name}=" do |value|
-        # get the attribute meta data
-        cka = ClassKit::AttributeHelper.instance.get_attribute(klass: self.class, name: name)
-
-        # verify if the attribute is allowed to be set to nil
-        if value.nil? && cka[:allow_nil] == false
-          raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must not be nil."
-        end
-
-        if !cka[:one_of].nil? && !value.nil?
-          parsed_value =
-          if value == true || value == false
-            value
-          elsif(/(true|t|yes|y|1)$/i === value.to_s.downcase)
-            true
-          elsif (/(false|f|no|n|0)$/i === value.to_s.downcase)
-            false
+    # ========= Define attribute setter =========
+    # The methods are defined as lean as possible
+    # This is a bit harder to read at this level but it gets rid of unnecessary runtime checks
+    # 1. If one_of is specified, we check if the value matches any of the allowed types
+    if one_of
+      class_eval do
+        define_method "#{name}=" do |value|
+          if value.nil? && cka[:allow_nil] == false
+            raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must not be nil."
           end
 
-          if parsed_value != nil
-            value = parsed_value
-          else
+          value = if value.nil?
+                    value
+                  elsif [true, false].include?(value)
+                    value
+                  elsif Constants::BOOL_TRUE_RE.match?(value.to_s)
+                    true
+                  elsif Constants::BOOL_FALSE_RE.match?(value.to_s)
+                    false
+                  else
+                    begin
+                      t = cka[:one_of].detect { |t| value.is_a?(t) }
+                      value = value_helper.parse(type: t, value: value)
+                    rescue StandardError => e
+                      raise ClassKit::Exceptions::InvalidAttributeValueError,
+                            "Attribute: #{name}, must be of type: #{t}. Error: #{e}"
+                    end
+                  end
+
+          instance_variable_set(getter, value)
+        end
+      end
+    # 2. When the attribute is typed, we parse into the target type if needed
+    elsif type
+      class_eval do
+        define_method "#{name}=" do |value|
+          if value.nil?
+            if cka[:allow_nil] == false
+              raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must not be nil."
+            end
+          elsif type == :bool || !value.is_a?(type)
             begin
-              type = cka[:one_of].detect {|t| value.is_a?(t) }
-              value = ClassKit::ValueHelper.instance.parse(type: type, value: value)
-            rescue => e
-              raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must be of type: #{type}. Error: #{e}"
+              value = value_helper.parse(type: type, value: value)
+            rescue StandardError => e
+              raise ClassKit::Exceptions::InvalidAttributeValueError,
+                    "Attribute: #{name}, must be of type: #{type}. Error: #{e}"
             end
           end
-        end
 
-        if !cka[:type].nil? && !value.nil? && (cka[:type] == :bool || !value.is_a?(cka[:type]))
-          begin
-            value = ClassKit::ValueHelper.instance.parse(type: cka[:type], value: value)
-          rescue => e
-            raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must be of type: #{cka[:type]}. Error: #{e}"
-          end
+          instance_variable_set(getter, value)
         end
+      end
+    # 3. If untyped and we allow nil, simply set the variable
+    elsif allow_nil == true
+      class_eval do
+        define_method "#{name}=" do |value|
+          instance_variable_set(getter, value)
+        end
+      end
+    # 4. In all other cases, only set the variable if non-nil
+    else
+      class_eval do
+        define_method "#{name}=" do |value|
+          raise ClassKit::Exceptions::InvalidAttributeValueError, "Attribute: #{name}, must not be nil." if value.nil?
 
-        instance_variable_set(:"@#{name}", value)
+          instance_variable_set(getter, value)
+        end
       end
     end
   end
