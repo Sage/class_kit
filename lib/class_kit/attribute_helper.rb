@@ -1,6 +1,5 @@
 module ClassKit
   class AttributeHelper
-
     def self.instance
       @instance ||= ClassKit::AttributeHelper.new
     end
@@ -18,12 +17,12 @@ module ClassKit
       return @attribute_store[klass] if @attribute_store.key?(klass)
 
       attributes = []
-      klass.ancestors.map do |k|
+      klass.ancestors.each do |k|
         hash = k.instance_variable_get(:@class_kit_attributes)
-        if hash != nil
-          hash.values.each do |a|
-            attributes.push(a)
-          end
+        next if hash.nil?
+
+        hash.each_value do |value|
+          attributes.push(value)
         end
       end
       attributes.compact!
